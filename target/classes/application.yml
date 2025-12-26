@@ -21,5 +21,10 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
+# JWT 配置
+jwt:
+  secret: replace-with-256-bit-secret-key-xxxx  # 生产环境应使用更安全的密钥
+  expiration: 3600000  # Token 过期时间（毫秒），默认 1 小时
+
 
 
