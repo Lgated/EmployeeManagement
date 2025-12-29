@@ -1,5 +1,6 @@
 package com.example.empmgmt.service.Impl;
 
+import com.example.empmgmt.Exception.BusinessException;
 import com.example.empmgmt.domain.Employee;
 import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
@@ -54,9 +55,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void delete(Long id) {
-        if (!employeeRepository.existsById(id)) {
-            throw new EntityNotFoundException("员工不存在，ID: " + id);
-        }
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("员工不存在，ID: " + id));
+
 
         employeeRepository.deleteById(id);
     }
@@ -83,9 +84,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employees;
         if (name != null && !name.isBlank()) {
             // containing : LIKE '%值%' , 大量数据的时候不要使用
-            employees = employeeRepository.findByNameContainingIgnoreCase(name);
+            employees = employeeRepository.findByNameContainingIgnoreCaseAndDeleteFalse(name);
         } else if (department != null && !department.isBlank()) {
-            employees = employeeRepository.findByDepartment(department);
+            employees = employeeRepository.findByDepartmentAndDeletedFalse(department);
         } else {
             employees = employeeRepository.findAll();
         }
