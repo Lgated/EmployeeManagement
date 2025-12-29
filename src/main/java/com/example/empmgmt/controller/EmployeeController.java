@@ -94,6 +94,9 @@ public class EmployeeController {
         return Result.success(deptAvgSalary);
     }
 
+    /**
+     * 统计员工在职时间
+     */
     @GetMapping("/{id}/years")
     public Result<BigDecimal> getEmpYears(@PathVariable Long id){
         BigDecimal empYears = employeeService.getEmpYears(id);

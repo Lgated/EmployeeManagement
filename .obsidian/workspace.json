@@ -185,6 +185,8 @@
   },
   "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
+    "target/classes/com/example/empmgmt/util/JwtUtil.class",
+    "target/classes/com/example/empmgmt/util",
     "target/classes/com/example/empmgmt/config/SecurityConfig.class",
     "target/classes/com/example/empmgmt/config/JwtAuthFilter.class",
     "target/classes/com/example/empmgmt/config",
@@ -193,8 +195,6 @@
     "target/classes/com/example/empmgmt/service/Impl",
     "target/classes/com/example/empmgmt/repository/UserRepository.class",
     "target/classes/com/example/empmgmt/repository/EmployeeRepository.class",
-    "target/classes/com/example/empmgmt/repository",
-    "target/classes/com/example/empmgmt/EmpMgmtApplication.class",
-    "target/classes/com/example/empmgmt/domain/User.class"
+    "target/classes/com/example/empmgmt/repository"
   ]
 }

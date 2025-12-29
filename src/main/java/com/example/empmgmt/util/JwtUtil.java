@@ -45,7 +45,7 @@ public class JwtUtil {
             return Jwts.parserBuilder()
                     .setSigningKey(key) // 指定验签密钥
                     .build() // 构建出JwtParser 实例
-                    .parseClaimsJwt(token) // 把字符串 JWT 解析成 Claims 对象（同时完成签名验证）
+                    .parseClaimsJws(token) // 把字符串 JWT 解析成 Claims 对象（同时完成签名验证）
                     .getBody() // 取载荷
                     .getSubject(); // 拿用户名
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class JwtUtil {
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJwt(token);
+                    .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
