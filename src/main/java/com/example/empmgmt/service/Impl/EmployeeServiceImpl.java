@@ -42,6 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
+    //TODO: 更新逻辑有问题：要求部分的时候，其他不动·
     @Override
     public EmployeeResponse update(Long id, EmployeeUpdateRequest request) {
         Employee employee = employeeRepository.findById(id)

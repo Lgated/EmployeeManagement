@@ -77,7 +77,7 @@ public class EmployeeController {
     }
 
     /**
-     * 统计各部门平均薪资
+     * 统计各部门平均人数
      */
     @GetMapping("/stats/dept-count")
     public Result<List<DeptStatsResponse>> getDeptCount(){
