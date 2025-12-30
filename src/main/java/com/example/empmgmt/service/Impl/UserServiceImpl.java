@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         //生成token
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getUsername(),user.getId());
         return AuthResponse.of(token, jwtUtil.getExpirationTime());
     }
 
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 生成token
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getUsername(),user.getId());
         return AuthResponse.of(token,jwtUtil.getExpirationTime());
     }
 }

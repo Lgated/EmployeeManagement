@@ -9,6 +9,7 @@ import com.example.empmgmt.dto.response.EmployeeResponse;
 import com.example.empmgmt.repository.EmployeeRepository;
 import com.example.empmgmt.service.EmployeeService;
 
+import com.example.empmgmt.util.SecurityUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,10 +45,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    //TODO: 更新逻辑有问题：要求部分的时候，其他不动·
+
     @Override
     public EmployeeResponse update(Long id, EmployeeUpdateRequest request) {
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("员工不存在，ID:" + id));
         copyFromRequest(request, employee);
         Employee updated = employeeRepository.save(employee);
@@ -55,17 +57,21 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void delete(Long id) {
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("员工不存在，ID: " + id));
 
+        //软删除
+        employee.setDeleted(true);
+        employee.setDeletedAt(LocalDateTime.now());
+        employee.setDeletedBy(getCurrentUserId()); // 从SecurityContext获取用户id
 
-        employeeRepository.deleteById(id);
+        employeeRepository.save(employee);
     }
 
     @Override
     @Transactional(readOnly = true)
     public EmployeeResponse findById(Long id) {
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("员工不存在，ID: " + id));
         return EmployeeResponse.from(employee);
     }
@@ -73,7 +79,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional(readOnly = true)
     public List<EmployeeResponse> listAll() {
-        return employeeRepository.findAll().stream()
+        return employeeRepository.findAllByDeletedFalse().stream()
                 .map(EmployeeResponse::from)
                 .toList();
     }
@@ -84,11 +90,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employees;
         if (name != null && !name.isBlank()) {
             // containing : LIKE '%值%' , 大量数据的时候不要使用
-            employees = employeeRepository.findByNameContainingIgnoreCaseAndDeleteFalse(name);
+            employees = employeeRepository.findByNameContainingIgnoreCaseAndDeletedFalse(name);
         } else if (department != null && !department.isBlank()) {
             employees = employeeRepository.findByDepartmentAndDeletedFalse(department);
         } else {
-            employees = employeeRepository.findAll();
+            employees = employeeRepository.findAllByDeletedFalse();
         }
         return employees.stream()
                 .map(EmployeeResponse::from)
@@ -137,6 +143,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     /**
+     * 恢复员工信息
+     * @param id
+     */
+    public void restore(Long id){
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("员工不存在，ID: " + id));
+
+        if(!employee.getDeleted()){
+            throw  new BusinessException("员工未被删除，无需恢复");
+        }
+
+        employee.setDeleted(false);
+        employee.setDeletedAt(null);
+        employee.setDeletedBy(null);
+        employee.setUpdatedBy(getCurrentUserId());
+
+        employeeRepository.save(employee);
+    }
+
+
+    /**
      * 将请求 DTO 的数据复制到实体对象
      */
     private void copyFromRequest(EmployeeCreateRequest request, Employee employee) {
@@ -162,5 +189,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setHireDate(request.hireDate());
         }
         employee.setSalary(request.salary());
+    }
+
+    // 添加私有方法
+    private Long getCurrentUserId() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        if (userId == null) {
+            throw new BusinessException("用户未登录或登录已过期");
+        }
+        return userId;
     }
 }

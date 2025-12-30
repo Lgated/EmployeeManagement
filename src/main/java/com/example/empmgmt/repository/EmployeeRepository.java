@@ -4,6 +4,7 @@ import com.example.empmgmt.domain.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,10 +12,12 @@ import java.util.Optional;
 
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee,Long> {
+public interface EmployeeRepository extends JpaRepository<Employee,Long>
+         // 继承 JpaSpecificationExecutor 以支持动态查询
+        , JpaSpecificationExecutor<Employee> {
 
     // 根据名字模糊匹配+忽略大小写查询（过滤已删除）
-    List<Employee> findByNameContainingIgnoreCaseAndDeleteFalse(String name);
+    List<Employee> findByNameContainingIgnoreCaseAndDeletedFalse(String name);
 
     // 根据部门查询（过滤已删除）
     List<Employee> findByDepartmentAndDeletedFalse(String department);

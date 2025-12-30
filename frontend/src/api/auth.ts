@@ -23,3 +23,9 @@ export const register = (data: RegisterRequest): Promise<AuthResponse> => {
   return request.post('/auth/register', data)
 }
 
+
+
+
+
+
+

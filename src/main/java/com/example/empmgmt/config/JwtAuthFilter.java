@@ -1,5 +1,6 @@
 package com.example.empmgmt.config;
 
+import com.example.empmgmt.security.UserAuthentication;
 import com.example.empmgmt.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,6 +33,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+
+
         // 1、从请求头中获取token
         String authHeader = request.getHeader("Authorization");
 
@@ -42,16 +45,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try{
                 //3、解析Token，获取用户名
                 String username = jwtUtil.parseUsername(token);
+                Long userId = jwtUtil.parseUserId(token);
 
                 //4、验证Token是否有效
                 //“Token 里有人且 Spring 还没认证过，才继续走 JWT 认证流程，避免重复干活。
                 if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
                     //5、创建认证对象
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
+                    UserAuthentication authentication =
+                            new UserAuthentication(
                                     username,
                                     null,  // 密码设为 null（JWT 不需要密码）
-                                    List.of()  // 权限列表（这里为空，可根据需要添加）
+                                    List.of(), // 权限列表（这里为空，可根据需要添加）
+                                    userId // 使用从Token中解析的用户ID
                             );
 
                     //6. 设置认证详情

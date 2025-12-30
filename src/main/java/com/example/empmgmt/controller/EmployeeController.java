@@ -8,8 +8,6 @@ import com.example.empmgmt.dto.response.EmployeeResponse;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.service.EmployeeService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;

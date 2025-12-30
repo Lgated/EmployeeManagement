@@ -1,5 +1,6 @@
 package com.example.empmgmt.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,15 +28,34 @@ public class JwtUtil {
     /**
      * 生成 JWT TOKEN
      */
-    public String generateToken(String username){
+    public String generateToken(String username,Long userId){
         Date now = new Date();
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId",userId) // 添加用户ID
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + ttlMs))
                 .signWith(key)
                 .compact();
     }
+
+
+    /**
+     * 从 Token 中解析用户ID
+     */
+    public Long parseUserId(String token){
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key) // 指定验签密钥
+                    .build() // 构建出JwtParser 实例
+                    .parseClaimsJws(token) // 把字符串 JWT 解析成 Claims 对象（同时完成签名验证）
+                    .getBody();// 取载荷
+            return claims.get("userId",Long.class);
+        }catch (Exception e){
+            throw new IllegalArgumentException("无效的Token",e);
+        }
+    }
+
 
     /**
      * 从 Token 中解析用户名
@@ -53,20 +73,6 @@ public class JwtUtil {
         }
     }
 
-    /**
-     * 验证 Token 是否有效
-     */
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     /**
      * 获取 Token 过期时间（秒）
