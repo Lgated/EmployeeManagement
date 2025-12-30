@@ -50,6 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponse update(Long id, EmployeeUpdateRequest request) {
         Employee employee = employeeRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("员工不存在，ID:" + id));
+        // 将dto赋值给实体对象
         copyFromRequest(request, employee);
         Employee updated = employeeRepository.save(employee);
         return EmployeeResponse.from(updated);
@@ -180,11 +181,25 @@ public class EmployeeServiceImpl implements EmployeeService {
      * 将更新请求 DTO 的数据复制到实体对象
      */
     private void copyFromRequest(EmployeeUpdateRequest request, Employee employee) {
-        employee.setName(request.name());
-        employee.setGender(request.gender());
-        employee.setAge(request.age());
-        employee.setDepartment(request.department());
-        employee.setPosition(request.position());
+        if(request.name() != null && !request.name().isBlank()){
+            employee.setName(request.name());
+        }
+        if (request.gender() != null && !request.gender().isBlank()) {
+            employee.setGender(request.gender());
+        }
+        if (request.age() != null) {
+            employee.setAge(request.age());
+        }
+        if (request.department() != null && !request.department().isBlank()) {
+            employee.setDepartment(request.department());
+        }
+        if (request.position() != null && !request.position().isBlank()) {
+            employee.setPosition(request.position());
+        }
+        // 7. 薪资
+        if (request.salary() != null) {
+            employee.setSalary(request.salary());
+        }
         if (request.hireDate() != null) {
             employee.setHireDate(request.hireDate());
         }

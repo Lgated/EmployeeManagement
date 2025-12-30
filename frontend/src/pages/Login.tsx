@@ -52,7 +52,7 @@ const Login = () => {
       <Card
         title={
           <div style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>
-            APJ员工管理系统1
+            APJ员工管理系统
           </div>
         }
         style={{ width: 400 }}
@@ -108,10 +108,4 @@ const Login = () => {
 }
 
 export default Login
-
-
-
-
-
-
 

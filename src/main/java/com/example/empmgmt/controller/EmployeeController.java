@@ -50,7 +50,7 @@ public class EmployeeController {
     public Result<List<EmployeeResponse>> list(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String department) {
-        List<EmployeeResponse> employeeResponses = employeeService.listAll();
+        List<EmployeeResponse> employeeResponses = employeeService.search(name,department);
         return Result.success(employeeResponses);
     }
 

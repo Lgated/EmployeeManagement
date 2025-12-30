@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,10 +28,11 @@ public class SecurityConfig {
      * 这是 Spring Security 的核心配置方法
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
 
-
+                // 开启 CORS，并使用我们自定义的 corsConfigurationSource
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 // 1. 禁用 CSRF（跨站请求伪造）保护
                 // 因为使用 JWT，不需要 CSRF 保护
                 .csrf(AbstractHttpConfigurer::disable)

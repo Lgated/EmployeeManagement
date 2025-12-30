@@ -13,6 +13,7 @@ import {
   Card,
   message,
   Select,
+  Space
 } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import dayjs, { Dayjs } from 'dayjs'
@@ -20,6 +21,7 @@ import {
   createEmployee,
   updateEmployee,
   getEmployeeById,
+  getEmployeeYears,
 } from '../api/employee'
 import type { EmployeeCreateRequest, EmployeeUpdateRequest } from '../types'
 
@@ -32,7 +34,7 @@ const EmployeeForm = () => {
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(false)
   const isEdit = !!id
-
+  const [years, setYears] = useState<number | null>(null)
   /**
    * 加载员工数据（编辑模式）
    */
@@ -57,6 +59,9 @@ const EmployeeForm = () => {
         hireDate: employee.hireDate ? dayjs(employee.hireDate) : null,
         salary: employee.salary,
       })
+       // 额外：加载在职时间
+      const empYears = await getEmployeeYears(Number(id))
+      setYears(empYears)
     } catch (error: any) {
       message.error('加载员工信息失败: ' + (error.message || '未知错误'))
       navigate('/employees')
@@ -114,6 +119,12 @@ const EmployeeForm = () => {
       }
       loading={initialLoading}
     >
+      {isEdit && years !== null && (
+        <div style={{ marginBottom: 16, color: '#666' }}>
+      在职时间：<strong>{years}</strong> 年
+        </div>
+      )}
+
       <Form
         form={form}
         layout="vertical"

@@ -185,17 +185,18 @@
   },
   "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
-    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl.class",
-    "target/classes/com/example/empmgmt/repository/EmployeeRepository.class",
-    "target/classes/com/example/empmgmt/util/SecurityUtil.class",
-    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/Impl",
-    "target/classes/com/example/empmgmt/security/UserAuthentication.class",
-    "target/classes/com/example/empmgmt/security",
-    "target/classes/com/example/empmgmt/repository/UserRepository.class",
-    "target/classes/com/example/empmgmt/repository",
-    "target/classes/com/example/empmgmt/Exception/BusinessException.class",
-    "target/classes/com/example/empmgmt/Exception/GlobalExceptionHandler.class",
+    "target/classes/com/example/empmgmt/controller/EmployeeController.class",
+    "target/classes/com/example/empmgmt/config/SecurityConfig.class",
+    "target/classes/com/example/empmgmt/config/CorsConfig.class",
+    "src/main/java/com/example/empmgmt/config/CorsConfig.java",
+    "frontend/node_modules/dayjs/package.json",
+    "frontend/node_modules/react-dom/package.json",
+    "frontend/node_modules/@babel/compat-data/native-modules.js",
+    "frontend/node_modules/@babel/compat-data/package.json",
+    "frontend/node_modules/@babel/template/lib/string.js",
+    "frontend/node_modules/@babel/template/lib/options.js",
+    "frontend/node_modules/@babel/template/lib/formatters.js",
+    "frontend/node_modules/picocolors/README.md",
     "frontend/node_modules/nanoid/README.md",
     "frontend/node_modules/scroll-into-view-if-needed/README.md",
     "JWT与Spring Security实战：从入门到踩坑.md",
@@ -229,7 +230,6 @@
     "frontend/node_modules/axios/MIGRATION_GUIDE.md",
     "frontend/node_modules/axios/CHANGELOG.md",
     "frontend/node_modules/rc-select/README.md",
-    "frontend/node_modules/@rc-component/async-validator/README.md",
-    "frontend/node_modules/rc-tree-select/LICENSE.md"
+    "frontend/node_modules/@rc-component/async-validator/README.md"
   ]
 }
