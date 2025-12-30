@@ -27,36 +27,49 @@ import {
 } from '../api/employee'
 import type { Employee } from '../types'
 import dayjs from 'dayjs'
+import { useLocation } from 'react-router-dom'
 
 const { Search } = Input
 const { Option } = Select
 
 const EmployeeList = () => {
   const navigate = useNavigate()
-  const [employees, setEmployees] = useState<Employee[]>([])
-  const [loading, setLoading] = useState(false)
-  const [searchName, setSearchName] = useState('')
-  const [searchDepartment, setSearchDepartment] = useState<string>()
+const [employees, setEmployees] = useState<Employee[]>([])
+const [loading, setLoading] = useState(false)
+const [searchName, setSearchName] = useState('')
+const [searchDepartment, setSearchDepartment] = useState<string>()
+const [page, setPage] = useState(1)
+const [pageSize, setPageSize] = useState(10)
+const [total, setTotal] = useState(0)
+
 
   /**
    * 加载员工列表
    */
-  const loadEmployees = async () => {
-    try {
-      setLoading(true)
-      const data = await getEmployeeList(searchName, searchDepartment)
-      setEmployees(data)
-    } catch (error: any) {
-      message.error('加载员工列表失败: ' + (error.message || '未知错误'))
-    } finally {
-      setLoading(false)
-    }
+const loadEmployees = async () => {
+  try {
+    setLoading(true)
+    const res = await getEmployeeList(searchName, searchDepartment, page, pageSize)
+    // res: PageResult<Employee>
+    setEmployees(res.records)
+    setTotal(res.total)
+  } catch (error: any) {
+    message.error('加载员工列表失败: ' + (error.message || '未知错误'))
+  } finally {
+    setLoading(false)
   }
+}
 
-  // 组件挂载时加载数据
-  useEffect(() => {
-    loadEmployees()
-  }, [])
+// 组件挂载/查询条件变化时调用
+useEffect(() => {
+  loadEmployees()
+}, [page, pageSize])   // 搜索点击时也会调用（见下）
+
+// 处理搜索 :搜索按钮点击时：重置到第一页
+const handleSearch = () => {
+  setPage(1)
+  loadEmployees()
+}
 
   /**
    * 处理删除员工
@@ -72,12 +85,6 @@ const EmployeeList = () => {
     }
   }
 
-  /**
-   * 处理搜索
-   */
-  const handleSearch = () => {
-    loadEmployees()
-  }
 
   /**
    * 获取所有部门列表（用于下拉选择）
@@ -229,27 +236,28 @@ const EmployeeList = () => {
       </Space>
 
       {/* 员工表格 */}
-      <Table
-        columns={columns}
-        dataSource={employees}
-        rowKey="id"
-        loading={loading}
-        scroll={{ x: 1200 }}
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showTotal: (total) => `共 ${total} 条记录`,
-        }}
+<Table
+  columns={columns}
+  dataSource={employees}
+  rowKey="id"
+  loading={loading}
+  pagination={{
+    current: page,
+    pageSize: pageSize,
+    total: total,
+    showSizeChanger: true,
+    showTotal: (total) => `共 ${total} 条记录`,
+    onChange: (newPage, newPageSize) => {
+      setPage(newPage)
+      setPageSize(newPageSize)
+      // 不需要手动调用 loadEmployees，依赖 useEffect 触发
+    },
+  }}
       />
     </Card>
   )
 }
 
 export default EmployeeList
-
-
-
-
-
 
 

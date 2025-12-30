@@ -25,6 +25,12 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>
     // 分页查询未删除的记录
     Page<Employee> findAllByDeletedFalse(Pageable pageable);
 
+    // 按姓名搜索 + 分页
+    Page<Employee> findByNameContainingIgnoreCaseAndDeletedFalse(String name, Pageable pageable);
+
+    // 按部门搜索 + 分页
+    Page<Employee> findByDepartmentAndDeletedFalse(String department, Pageable pageable);
+
     // 查询未删除的记录
     Optional<Employee> findByIdAndDeletedFalse(Long id);
 

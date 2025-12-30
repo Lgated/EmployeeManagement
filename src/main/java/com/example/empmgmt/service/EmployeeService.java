@@ -5,6 +5,7 @@ import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
 import com.example.empmgmt.dto.response.DeptStatsResponse;
 import com.example.empmgmt.dto.response.EmployeeResponse;
+import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.repository.EmployeeRepository;
 
 import java.math.BigDecimal;
@@ -32,6 +33,11 @@ public interface EmployeeService {
      * 根据id查找员工
      */
     EmployeeResponse findById(Long id);
+
+    /**
+     * 分页查询
+     */
+    PageResponse<EmployeeResponse> pageQuery(String name, String department, int page, int size);
 
     /**
      * 查询所有员工

@@ -5,6 +5,7 @@ import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
 import com.example.empmgmt.dto.response.DeptStatsResponse;
 import com.example.empmgmt.dto.response.EmployeeResponse;
+import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -47,11 +48,14 @@ public class EmployeeController {
      * 查询所有员工（支持按姓名或部门搜索）
      */
     @GetMapping
-    public Result<List<EmployeeResponse>> list(
+    public Result<PageResponse<EmployeeResponse>> list(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String department) {
-        List<EmployeeResponse> employeeResponses = employeeService.search(name,department);
-        return Result.success(employeeResponses);
+            @RequestParam(required = false) String department,
+            @RequestParam(defaultValue = "1") int page,      // 当前页，默认第 1 页
+            @RequestParam(defaultValue = "10") int size)     // 每页条数，默认 10 条
+    {
+        PageResponse<EmployeeResponse> pageResult = employeeService.pageQuery(name, department, page, size);
+        return Result.success(pageResult);
     }
 
     /**

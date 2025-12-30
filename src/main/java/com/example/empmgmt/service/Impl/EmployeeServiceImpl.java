@@ -6,6 +6,7 @@ import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
 import com.example.empmgmt.dto.response.DeptStatsResponse;
 import com.example.empmgmt.dto.response.EmployeeResponse;
+import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.repository.EmployeeRepository;
 import com.example.empmgmt.service.EmployeeService;
 
@@ -14,6 +15,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 
 import jakarta.persistence.PersistenceContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +80,33 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("员工不存在，ID: " + id));
         return EmployeeResponse.from(employee);
+    }
+
+    @Override
+    public PageResponse<EmployeeResponse> pageQuery(String name, String department, int page, int size) {
+        // 1. PageRequest：page 从 0 开始；按 id 正序排列
+        Pageable pageable = PageRequest.of(
+                Math.max(page - 1, 0),      // 前端一般从 1 开始，后端做个保护
+                size,
+                Sort.by(Sort.Direction.ASC, "id")   // 核心：按 id 升序
+        );
+
+        Page<Employee> employeePage;
+
+        // 2. 根据搜索条件走不同的查询
+        if (name != null && !name.isBlank()) {
+            employeePage = employeeRepository.findByNameContainingIgnoreCaseAndDeletedFalse(name, pageable);
+        } else if (department != null && !department.isBlank()) {
+            employeePage = employeeRepository.findByDepartmentAndDeletedFalse(department, pageable);
+        } else {
+            employeePage = employeeRepository.findAllByDeletedFalse(pageable);
+        }
+
+        // 3. 将 Page<Employee> 转成 Page<EmployeeResponse>
+        Page<EmployeeResponse> mappedPage = employeePage.map(EmployeeResponse::from);
+
+        // 4. 用刚才的 PageResponse 包装
+        return PageResponse.of(mappedPage);
     }
 
     @Override
