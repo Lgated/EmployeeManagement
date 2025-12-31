@@ -12,6 +12,11 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 10MB # 单个文件最大10MB
+      max-request-size: 50MB  # 总请求最大50MB
+      enabled: true
 
 server:
   port: 8080
@@ -26,3 +31,6 @@ jwt:
   secret: replace-with-256-bit-secret-key-xxxx  # 生产环境应使用更安全的密钥
   expiration: 3600000  # Token 过期时间（毫秒），默认 1 小时
 
+# 文件存储路径配置
+file:
+  upload-path: D:/java/uploads/

@@ -24,6 +24,7 @@ import {
   getEmployeeYears,
 } from '../api/employee'
 import type { EmployeeCreateRequest, EmployeeUpdateRequest } from '../types'
+import ImageUpload from '../components/ImageUpload'
 
 const { Option } = Select
 
@@ -58,6 +59,7 @@ const EmployeeForm = () => {
         position: employee.position,
         hireDate: employee.hireDate ? dayjs(employee.hireDate) : null,
         salary: employee.salary,
+        avatar: employee.avatar,
       })
        // 额外：加载在职时间
       const empYears = await getEmployeeYears(Number(id))
@@ -131,6 +133,13 @@ const EmployeeForm = () => {
         onFinish={handleSubmit}
         autoComplete="off"
       >
+        <Form.Item
+          label="头像"
+          name="avatar"
+        >
+          <ImageUpload />
+        </Form.Item>  
+        
         <Form.Item
           label="姓名"
           name="name"
@@ -219,6 +228,13 @@ const EmployeeForm = () => {
 }
 
 export default EmployeeForm
+
+
+
+
+
+
+
 
 
 

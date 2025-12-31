@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 允许未认证访问的路径（登录、注册接口）
                         .requestMatchers("/api/auth/**").permitAll()
+                        // 允许访问上传的静态资源（图片等）
+                        .requestMatchers("/uploads/**").permitAll()
                         // 其他所有请求都需要认证
                         .anyRequest().authenticated()
                 )

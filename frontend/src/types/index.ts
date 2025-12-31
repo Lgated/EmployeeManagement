@@ -26,6 +26,7 @@ export interface Employee {
   position?: string
   hireDate: string  // LocalDate 序列化为字符串 "YYYY-MM-DD"
   salary: number    // BigDecimal 序列化为数字
+  avatar?: string   // 头像URL
   createdAt?: string
   updatedAt?: string
 }
@@ -42,6 +43,7 @@ export interface EmployeeCreateRequest {
   position?: string
   hireDate: string  // "YYYY-MM-DD"
   salary: number
+  avatar?: string   // 头像URL
 }
 
 /**
@@ -56,6 +58,7 @@ export interface EmployeeUpdateRequest {
   position?: string
   hireDate?: string
   salary?: number
+  avatar?: string   // 头像URL
 }
 
 /**
@@ -96,6 +99,13 @@ export interface AuthResponse {
   tokenType: string
   expiresIn: number
 }
+
+
+
+
+
+
+
 
 
 

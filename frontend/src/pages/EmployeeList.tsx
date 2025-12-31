@@ -34,42 +34,42 @@ const { Option } = Select
 
 const EmployeeList = () => {
   const navigate = useNavigate()
-const [employees, setEmployees] = useState<Employee[]>([])
-const [loading, setLoading] = useState(false)
-const [searchName, setSearchName] = useState('')
-const [searchDepartment, setSearchDepartment] = useState<string>()
-const [page, setPage] = useState(1)
-const [pageSize, setPageSize] = useState(10)
-const [total, setTotal] = useState(0)
+  const [employees, setEmployees] = useState<Employee[]>([])
+  const [loading, setLoading] = useState(false)
+  const [searchName, setSearchName] = useState('')
+  const [searchDepartment, setSearchDepartment] = useState<string>()
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [total, setTotal] = useState(0)
 
 
   /**
    * 加载员工列表
    */
-const loadEmployees = async () => {
-  try {
-    setLoading(true)
-    const res = await getEmployeeList(searchName, searchDepartment, page, pageSize)
-    // res: PageResult<Employee>
-    setEmployees(res.records)
-    setTotal(res.total)
-  } catch (error: any) {
-    message.error('加载员工列表失败: ' + (error.message || '未知错误'))
-  } finally {
-    setLoading(false)
+  const loadEmployees = async () => {
+    try {
+      setLoading(true)
+      const res = await getEmployeeList(searchName, searchDepartment, page, pageSize)
+      // res: PageResult<Employee>
+      setEmployees(res.records)
+      setTotal(res.total)
+    } catch (error: any) {
+      message.error('加载员工列表失败: ' + (error.message || '未知错误'))
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
-// 组件挂载/查询条件变化时调用
-useEffect(() => {
-  loadEmployees()
-}, [page, pageSize])   // 搜索点击时也会调用（见下）
+  // 组件挂载/查询条件变化时调用
+  useEffect(() => {
+    loadEmployees()
+  }, [page, pageSize])   // 搜索点击时也会调用（见下）
 
-// 处理搜索 :搜索按钮点击时：重置到第一页
-const handleSearch = () => {
-  setPage(1)
-  loadEmployees()
-}
+  // 处理搜索 :搜索按钮点击时：重置到第一页
+  const handleSearch = () => {
+    setPage(1)
+    loadEmployees()
+  }
 
   /**
    * 处理删除员工
@@ -98,6 +98,35 @@ const handleSearch = () => {
       dataIndex: 'id',
       key: 'id',
       width: 80,
+    },
+    // 在 name 列之前添加
+    {
+      title: '头像',
+      dataIndex: 'avatar',
+      key: 'avatar',
+      width: 80,
+      render: (avatar: string) => (
+        avatar ? (
+          <img
+            src={avatar.startsWith('http') ? avatar : `http://localhost:8080${avatar}`}
+            alt="avatar"
+            style={{ width: 50, height: 50, borderRadius: '50%', objectFit: 'cover' }}
+          />
+        ) : (
+          <div style={{
+            width: 50,
+            height: 50,
+            borderRadius: '50%',
+            background: '#f0f0f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#999'
+          }}>
+            暂无
+          </div>
+        )
+      ),
     },
     {
       title: '姓名',
@@ -236,28 +265,35 @@ const handleSearch = () => {
       </Space>
 
       {/* 员工表格 */}
-<Table
-  columns={columns}
-  dataSource={employees}
-  rowKey="id"
-  loading={loading}
-  pagination={{
-    current: page,
-    pageSize: pageSize,
-    total: total,
-    showSizeChanger: true,
-    showTotal: (total) => `共 ${total} 条记录`,
-    onChange: (newPage, newPageSize) => {
-      setPage(newPage)
-      setPageSize(newPageSize)
-      // 不需要手动调用 loadEmployees，依赖 useEffect 触发
-    },
-  }}
+      <Table
+        columns={columns}
+        dataSource={employees}
+        rowKey="id"
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize: pageSize,
+          total: total,
+          showSizeChanger: true,
+          showTotal: (total) => `共 ${total} 条记录`,
+          onChange: (newPage, newPageSize) => {
+            setPage(newPage)
+            setPageSize(newPageSize)
+            // 不需要手动调用 loadEmployees，依赖 useEffect 触发
+          },
+        }}
       />
     </Card>
   )
 }
 
 export default EmployeeList
+
+
+
+
+
+
+
 
 

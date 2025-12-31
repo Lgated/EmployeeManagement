@@ -105,7 +105,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 3. 将 Page<Employee> 转成 Page<EmployeeResponse>
         Page<EmployeeResponse> mappedPage = employeePage.map(EmployeeResponse::from);
 
-        // 4. 用刚才的 PageResponse 包装
+        // 4. 用 PageResponse 包装
         return PageResponse.of(mappedPage);
     }
 
@@ -207,6 +207,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPosition(request.position());
         employee.setHireDate(request.hireDate());
         employee.setSalary(request.salary());
+        employee.setAvatar(request.avatar());
     }
 
     /**
@@ -234,6 +235,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         if (request.hireDate() != null) {
             employee.setHireDate(request.hireDate());
+        }
+        if (request.avatar() != null && !request.avatar().isBlank()) {
+            employee.setAvatar(request.avatar());
         }
         employee.setSalary(request.salary());
     }

@@ -87,6 +87,7 @@ public class EmployeeController {
         return Result.success(deptEmpCount);
     }
 
+
     /**
      * 统计各部门平均薪资
      */
@@ -95,6 +96,7 @@ public class EmployeeController {
         List<DeptStatsResponse> deptAvgSalary = employeeService.getDeptAvgSalary();
         return Result.success(deptAvgSalary);
     }
+
 
     /**
      * 统计员工在职时间

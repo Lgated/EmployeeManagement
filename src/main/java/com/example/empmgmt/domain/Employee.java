@@ -25,6 +25,9 @@ public class Employee {
 
     private BigDecimal salary;
 
+    @Column(name = "avatar", length = 500)
+    private String avatar;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 

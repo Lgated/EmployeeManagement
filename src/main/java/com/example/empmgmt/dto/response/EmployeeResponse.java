@@ -16,6 +16,7 @@ public record EmployeeResponse(
         String position,
         LocalDate hireDate,
         BigDecimal salary,
+        String avatar,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -31,6 +32,7 @@ public record EmployeeResponse(
                 employee.getPosition(),
                 employee.getHireDate(),
                 employee.getSalary(),
+                employee.getAvatar(),
                 employee.getCreatedAt(),
                 employee.getUpdatedAt()
         );

@@ -14,6 +14,7 @@ public record EmployeeUpdateRequest(
         String position,
         LocalDate hireDate,
         @Positive(message = "薪资必须大于0")
-        BigDecimal salary
+        BigDecimal salary,
+        String avatar
 ) {
 }

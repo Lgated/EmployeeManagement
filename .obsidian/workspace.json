@@ -13,15 +13,44 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "企业级删除策略与用户表设计指南.md",
+                "file": "JWT与Spring Security实战：从入门到踩坑.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "企业级删除策略与用户表设计指南"
+              "title": "JWT与Spring Security实战：从入门到踩坑"
+            }
+          },
+          {
+            "id": "05b1bdbf897cadb6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "a.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "a"
+            }
+          },
+          {
+            "id": "0a1a110afdba09e6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "a1.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "a1"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -94,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "企业级删除策略与用户表设计指南.md",
+                "file": "a1.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +133,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 企业级删除策略与用户表设计指南"
+              "title": "Backlinks for a1"
             }
           },
           {
@@ -113,12 +142,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "企业级删除策略与用户表设计指南.md",
+                "file": "a1.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 企业级删除策略与用户表设计指南"
+              "title": "Outgoing links from a1"
             }
           },
           {
@@ -156,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "企业级删除策略与用户表设计指南.md",
+                "file": "a1.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 企业级删除策略与用户表设计指南"
+              "title": "Outline of a1"
             }
           }
         ]
@@ -183,28 +212,36 @@
       "bases:Create new base": false
     }
   },
-  "active": "cd6898a1dcb19749",
+  "active": "0a1a110afdba09e6",
   "lastOpenFiles": [
-    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl.class",
-    "target/classes/com/example/empmgmt/dto/response/PageResponse.class",
-    "target/classes/com/example/empmgmt/service/EmployeeService.class",
-    "target/classes/com/example/empmgmt/controller/EmployeeController.class",
-    "target/classes/com/example/empmgmt/repository/EmployeeRepository.class",
-    "frontend/node_modules/typescript/lib/lib.es2024.arraybuffer.d.ts",
-    "frontend/node_modules/typescript/lib/lib.es2015.collection.d.ts",
-    "frontend/node_modules/form-data/index.d.ts",
+    "target/classes/com/example/empmgmt/config/SecurityConfig.class",
+    "frontend/node_modules/typescript/lib/tr/diagnosticMessages.generated.json",
+    "frontend/node_modules/typescript/lib/tr",
+    "frontend/node_modules/json2mq/test/test.js",
+    "frontend/node_modules/json2mq/test",
+    "frontend/node_modules/es-set-tostringtag/test/index.js",
+    "frontend/node_modules/es-set-tostringtag/test",
+    "frontend/node_modules/delayed-stream/lib/delayed_stream.js",
+    "frontend/node_modules/delayed-stream/lib",
+    "frontend/node_modules/caniuse-lite/package.json",
+    "target/classes/com/example/empmgmt/controller/FileController.class",
+    "frontend/node_modules/@rc-component/async-validator/LICENSE.md",
+    "frontend/node_modules/es-object-atoms/CHANGELOG.md",
+    "frontend/node_modules/@rc-component/mutate-observer/README.md",
+    "a.md",
+    "a1.md",
+    "JWT与Spring Security实战：从入门到踩坑.md",
+    "frontend/node_modules/es-object-atoms/README.md",
+    "frontend/node_modules/es-define-property/README.md",
+    "frontend/node_modules/get-intrinsic/README.md",
+    "企业级删除策略与用户表设计指南.md",
     "frontend/node_modules/typescript/SECURITY.md",
-    "frontend/node_modules/typescript/lib/lib.es2022.intl.d.ts",
-    "frontend/node_modules/typescript/lib/lib.es2021.intl.d.ts",
-    "frontend/node_modules/@rc-component/async-validator/es/util.js",
     "frontend/node_modules/picocolors/README.md",
     "frontend/node_modules/nanoid/README.md",
     "frontend/node_modules/scroll-into-view-if-needed/README.md",
-    "JWT与Spring Security实战：从入门到踩坑.md",
     "frontend/node_modules/stylis/README.md",
     "frontend/node_modules/json5/README.md",
     "frontend/node_modules/jsesc/README.md",
-    "企业级删除策略与用户表设计指南.md",
     "frontend/node_modules/typescript/README.md",
     "frontend/node_modules/escalade/readme.md",
     "frontend/node_modules/baseline-browser-mapping/README.md",
@@ -213,8 +250,6 @@
     "frontend/node_modules/@babel/code-frame/README.md",
     "frontend/README.md",
     "frontend/前后端联调指南.md",
-    "frontend/快速启动.md",
-    "前端项目说明.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zhihu.svg",
@@ -224,12 +259,6 @@
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/x.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/woman.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/windows.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/wifi.svg",
-    "frontend/node_modules/dayjs/CHANGELOG.md",
-    "frontend/node_modules/axios/README.md",
-    "frontend/node_modules/rc-table/README.md",
-    "frontend/node_modules/axios/MIGRATION_GUIDE.md",
-    "frontend/node_modules/axios/CHANGELOG.md",
-    "frontend/node_modules/rc-select/README.md"
+    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/wifi.svg"
   ]
 }

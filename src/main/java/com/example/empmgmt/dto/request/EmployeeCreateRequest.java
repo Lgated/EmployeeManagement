@@ -26,5 +26,7 @@ public record EmployeeCreateRequest(
 
         @NotNull(message = "薪资不能为空")
         @Positive(message = "薪资必须大于0")
-        BigDecimal salary
+        BigDecimal salary,
+        
+        String avatar
 ) { }

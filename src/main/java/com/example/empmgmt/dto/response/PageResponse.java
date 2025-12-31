@@ -1,5 +1,7 @@
 package com.example.empmgmt.dto.response;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 public record PageResponse<T>(
@@ -8,7 +10,8 @@ public record PageResponse<T>(
         int page,
         int size
 ) {
-    public static <T> PageResponse<T> of(org.springframework.data.domain.Page<T> page) {
+    //将page<T> -> pageResponse
+    public static <T> PageResponse<T> of(Page<T> page) {
         return new PageResponse<>(
                 page.getContent(),
                 page.getTotalElements(),
