@@ -1,6 +1,6 @@
 package com.example.empmgmt.service.Impl;
 
-import com.example.empmgmt.Exception.BusinessException;
+import com.example.empmgmt.common.Exception.BusinessException;
 import com.example.empmgmt.domain.Employee;
 import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
@@ -10,7 +10,7 @@ import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.repository.EmployeeRepository;
 import com.example.empmgmt.service.EmployeeService;
 
-import com.example.empmgmt.util.SecurityUtil;
+import com.example.empmgmt.common.util.SecurityUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 

@@ -1,4 +1,4 @@
-package com.example.empmgmt.annotation;
+package com.example.empmgmt.common.enums;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.example.empmgmt.Exception;
+package com.example.empmgmt.common.Exception;
 
 
 import lombok.Getter;

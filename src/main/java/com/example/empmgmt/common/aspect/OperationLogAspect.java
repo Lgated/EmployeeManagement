@@ -1,8 +1,8 @@
-package com.example.empmgmt.aspect;
+package com.example.empmgmt.common.aspect;
 
 import com.example.empmgmt.domain.OperationLog;
 import com.example.empmgmt.repository.OperationLogRepository;
-import com.example.empmgmt.util.SecurityUtil;
+import com.example.empmgmt.common.util.SecurityUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +38,15 @@ public class OperationLogAspect {
     /**
      * 环绕通知：在方法执行前后记录日志
      */
-    @Around("@annotation(com.example.empmgmt.annotation.OperationLog)")
+    @Around("@annotation(com.example.empmgmt.common.annotation.OperationLog)")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         
         // 获取注解信息
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
         Method method = signature.getMethod();
-        com.example.empmgmt.annotation.OperationLog annotation =
-                method.getAnnotation(com.example.empmgmt.annotation.OperationLog.class);
+        com.example.empmgmt.common.annotation.OperationLog annotation =
+                method.getAnnotation(com.example.empmgmt.common.annotation.OperationLog.class);
 
         // 创建日志对象
         OperationLog operationLog = new OperationLog();

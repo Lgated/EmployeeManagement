@@ -1,4 +1,4 @@
-package com.example.empmgmt.util;
+package com.example.empmgmt.common.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

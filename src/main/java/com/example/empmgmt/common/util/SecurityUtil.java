@@ -1,4 +1,4 @@
-package com.example.empmgmt.util;
+package com.example.empmgmt.common.util;
 
 import com.example.empmgmt.security.UserAuthentication;
 import org.springframework.security.core.Authentication;

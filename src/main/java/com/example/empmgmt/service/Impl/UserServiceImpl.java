@@ -6,7 +6,7 @@ import com.example.empmgmt.dto.request.RegisterRequest;
 import com.example.empmgmt.dto.response.AuthResponse;
 import com.example.empmgmt.repository.UserRepository;
 import com.example.empmgmt.service.UserService;
-import com.example.empmgmt.util.JwtUtil;
+import com.example.empmgmt.common.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

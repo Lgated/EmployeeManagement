@@ -1,6 +1,7 @@
 package com.example.empmgmt.controller;
 
-import com.example.empmgmt.annotation.OperationLog;
+import com.example.empmgmt.common.annotation.OperationLog;
+import com.example.empmgmt.common.enums.OperationType;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.service.FileService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ public class FileController {
     @PostMapping("/upload")
     @OperationLog(
             module = "文件管理",
-            type = com.example.empmgmt.annotation.OperationType.CREATE,
+            type = OperationType.CREATE,
             description = "上传文件"
     )
     public Result<String> upload(@RequestParam("file")MultipartFile multipartFile){

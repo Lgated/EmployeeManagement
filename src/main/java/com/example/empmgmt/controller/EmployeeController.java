@@ -1,8 +1,10 @@
 package com.example.empmgmt.controller;
 
 
-import com.example.empmgmt.annotation.OperationLog;
-import com.example.empmgmt.annotation.OperationType;
+import com.example.empmgmt.common.annotation.OperationLog;
+import com.example.empmgmt.common.annotation.RequiresPermission;
+import com.example.empmgmt.common.annotation.RequiresRole;
+import com.example.empmgmt.common.enums.OperationType;
 import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
 import com.example.empmgmt.dto.response.DeptStatsResponse;
@@ -27,9 +29,10 @@ public class EmployeeController {
     }
 
     /**
-     * 创建员工
+     * 创建员工 -- 创建权限
      */
     @PostMapping
+    @RequiresPermission(value = "employee:create", checkDepartment = true)
     @OperationLog(
             module = "员工管理",
             type = OperationType.CREATE,
@@ -44,8 +47,9 @@ public class EmployeeController {
     }
 
     /**
-     * 根据 id 去查找员工
+     * 根据 id 去查找员工 -- 读取权限+所有者检查
      */
+    @RequiresPermission(value = "employee:read", checkOwner = true)
     @GetMapping("/{id}")
     @OperationLog(
             module = "员工管理",
@@ -58,14 +62,10 @@ public class EmployeeController {
     }
 
     /**
-     * 查询所有员工（支持按姓名或部门搜索）
+     * 查询所有员工（支持按姓名或部门搜索） -- 读取权限
      */
     @GetMapping
-    @OperationLog(
-            module = "员工管理",
-            type = OperationType.QUERY,
-            description = "查询员工列表"
-    )
+    @RequiresPermission("employee:read")
     public Result<PageResponse<EmployeeResponse>> list(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String department,
@@ -77,9 +77,10 @@ public class EmployeeController {
     }
 
     /**
-     * 更新员工
+     * 更新员工 -- 更新权限 + 所有检查
      */
     @PutMapping("/{id}")
+    @RequiresPermission(value = "employee:update", checkOwner = true,checkDepartment = true)
     @OperationLog(
             module = "员工管理",
             type = OperationType.UPDATE,
@@ -94,9 +95,10 @@ public class EmployeeController {
     }
 
     /**
-     * 删除员工
+     * 删除员工 -- 删除权限 + 部门检查
      */
     @DeleteMapping("/{id}")
+    @RequiresPermission(value = "employee:delete", checkDepartment = true)
     @OperationLog(
             module = "员工管理",
             type = OperationType.DELETE,
@@ -135,4 +137,7 @@ public class EmployeeController {
         BigDecimal empYears = employeeService.getEmpYears(id);
         return Result.success(empYears);
     }
+
+
+    //todo: 导出员工数据
 }

@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "企业级功能扩展方案.md",
+                "file": "用户管理功能完整实现方案.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "企业级功能扩展方案"
+              "title": "用户管理功能完整实现方案"
             }
           }
         ],
@@ -123,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "企业级功能扩展方案.md",
+                "file": "用户管理功能完整实现方案.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +133,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 企业级功能扩展方案"
+              "title": "Backlinks for 用户管理功能完整实现方案"
             }
           },
           {
@@ -142,12 +142,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "企业级功能扩展方案.md",
+                "file": "用户管理功能完整实现方案.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 企业级功能扩展方案"
+              "title": "Outgoing links from 用户管理功能完整实现方案"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "企业级功能扩展方案.md",
+                "file": "用户管理功能完整实现方案.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 企业级功能扩展方案"
+              "title": "Outline of 用户管理功能完整实现方案"
             }
           }
         ]
@@ -214,29 +214,32 @@
   },
   "active": "0a1a110afdba09e6",
   "lastOpenFiles": [
-    "target/classes/com/example/empmgmt/util/SecurityUtil.class",
-    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/Impl/FileServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/Impl",
-    "target/classes/com/example/empmgmt/security/UserAuthentication.class",
-    "target/classes/com/example/empmgmt/security",
-    "target/classes/com/example/empmgmt/repository/UserRepository.class",
-    "target/classes/com/example/empmgmt/repository/EmployeeRepository.class",
-    "target/classes/com/example/empmgmt/Exception/GlobalExceptionHandler.class",
-    "target/classes/com/example/empmgmt/Exception/BusinessException.class",
+    "src/main/java/com/example/empmgmt/dto/request/ResetPasswordRequest.java",
+    "src/main/java/com/example/empmgmt/dto/request/AssignRoleRequest.java",
+    "src/main/java/com/example/empmgmt/dto/request/UserUpdateRequest.java",
+    "pom.xml~",
+    "a.md",
+    "RBAC权限系统设计方案.md",
+    "用户管理功能完整实现方案.md",
+    "src/main/java/com/example/empmgmt/dto/response/UserResponse.java",
+    "src/main/java/com/example/empmgmt/dto/request/UserCreateRequest.java",
+    "src/main/java/com/example/empmgmt/controller/UserController.java",
+    "src/main/java/com/example/empmgmt/common/Exception/PermissionDeniedException.java",
+    "src/main/java/com/example/empmgmt/common/aspect/PermissionAspect.java",
+    "src/main/java/com/example/empmgmt/service/Impl/PermissionServiceImpl.java",
+    "src/main/java/com/example/empmgmt/service/PermissionService.java",
+    "RBAC权限系统关系图.md",
+    "JWT与Spring Security实战：从入门到踩坑.md",
+    "企业级功能扩展方案.md",
     "frontend/node_modules/json2mq/README.md",
     "frontend/node_modules/@rollup/rollup-win32-x64-msvc/README.md",
     "frontend/node_modules/@babel/helper-validator-option/README.md",
     "frontend/docs/快速启动.md",
     "frontend/docs/前后端联调指南.md",
     "a1.md",
-    "企业级功能扩展方案.md",
     "frontend/node_modules/@rc-component/async-validator/LICENSE.md",
     "frontend/node_modules/es-object-atoms/CHANGELOG.md",
     "frontend/node_modules/@rc-component/mutate-observer/README.md",
-    "a.md",
-    "JWT与Spring Security实战：从入门到踩坑.md",
     "frontend/node_modules/es-object-atoms/README.md",
     "frontend/node_modules/es-define-property/README.md",
     "frontend/node_modules/get-intrinsic/README.md",
@@ -247,9 +250,6 @@
     "frontend/node_modules/scroll-into-view-if-needed/README.md",
     "frontend/node_modules/stylis/README.md",
     "frontend/node_modules/json5/README.md",
-    "frontend/node_modules/jsesc/README.md",
-    "frontend/node_modules/typescript/README.md",
-    "frontend/node_modules/escalade/readme.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zhihu.svg",

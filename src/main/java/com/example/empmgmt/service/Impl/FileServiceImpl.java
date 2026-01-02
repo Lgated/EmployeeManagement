@@ -1,6 +1,6 @@
 package com.example.empmgmt.service.Impl;
 
-import com.example.empmgmt.Exception.BusinessException;
+import com.example.empmgmt.common.Exception.BusinessException;
 import com.example.empmgmt.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

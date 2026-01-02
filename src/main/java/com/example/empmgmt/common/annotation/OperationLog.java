@@ -1,5 +1,7 @@
-package com.example.empmgmt.annotation;
+package com.example.empmgmt.common.annotation;
 
+
+import com.example.empmgmt.common.enums.OperationType;
 
 import java.lang.annotation.*;
 
