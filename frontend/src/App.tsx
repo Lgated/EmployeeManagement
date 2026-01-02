@@ -10,6 +10,7 @@ import Register from './pages/Register'
 import EmployeeList from './pages/EmployeeList'
 import EmployeeForm from './pages/EmployeeForm'
 import Statistics from './pages/Statistics'
+import OperationLogs from './pages/OperationLogs'
 
 /**
  * 私有路由组件
@@ -52,6 +53,9 @@ function App() {
         
         {/* 统计页面 */}
         <Route path="statistics" element={<Statistics />} />
+        
+        {/* 操作日志页面 */}
+        <Route path="logs" element={<OperationLogs />} />
       </Route>
       
       {/* 404页面 */}

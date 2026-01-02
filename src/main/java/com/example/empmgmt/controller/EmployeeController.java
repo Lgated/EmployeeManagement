@@ -1,6 +1,8 @@
 package com.example.empmgmt.controller;
 
 
+import com.example.empmgmt.annotation.OperationLog;
+import com.example.empmgmt.annotation.OperationType;
 import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
 import com.example.empmgmt.dto.response.DeptStatsResponse;
@@ -28,6 +30,12 @@ public class EmployeeController {
      * 创建员工
      */
     @PostMapping
+    @OperationLog(
+            module = "员工管理",
+            type = OperationType.CREATE,
+            description = "创建员工",
+            saveResult = true
+    )
     public Result<EmployeeResponse> create(
             @Valid @RequestBody EmployeeCreateRequest request
     ){
@@ -39,6 +47,11 @@ public class EmployeeController {
      * 根据 id 去查找员工
      */
     @GetMapping("/{id}")
+    @OperationLog(
+            module = "员工管理",
+            type = OperationType.QUERY,
+            description = "根据ID查询员工"
+    )
     public Result<EmployeeResponse> getById(@PathVariable Long id){
         EmployeeResponse employeeServiceById = employeeService.findById(id);
         return Result.success(employeeServiceById);
@@ -48,6 +61,11 @@ public class EmployeeController {
      * 查询所有员工（支持按姓名或部门搜索）
      */
     @GetMapping
+    @OperationLog(
+            module = "员工管理",
+            type = OperationType.QUERY,
+            description = "查询员工列表"
+    )
     public Result<PageResponse<EmployeeResponse>> list(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String department,
@@ -62,6 +80,12 @@ public class EmployeeController {
      * 更新员工
      */
     @PutMapping("/{id}")
+    @OperationLog(
+            module = "员工管理",
+            type = OperationType.UPDATE,
+            description = "更新员工信息",
+            saveResult = true
+    )
     public Result<EmployeeResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody EmployeeUpdateRequest employeeUpdateRequest){
@@ -73,6 +97,11 @@ public class EmployeeController {
      * 删除员工
      */
     @DeleteMapping("/{id}")
+    @OperationLog(
+            module = "员工管理",
+            type = OperationType.DELETE,
+            description = "删除员工"
+    )
     public Result<Void> delete(@PathVariable Long id){
         employeeService.delete(id);
         return Result.success(null);

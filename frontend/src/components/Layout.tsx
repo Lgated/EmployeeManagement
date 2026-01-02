@@ -12,6 +12,7 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons'
 import { useAuthStore } from '../stores/authStore'
 import type { MenuProps } from 'antd'
@@ -35,6 +36,11 @@ const Layout = () => {
       key: '/statistics',
       icon: <BarChartOutlined />,
       label: '数据统计',
+    },
+    {
+      key: '/logs',
+      icon: <FileTextOutlined />,
+      label: '操作日志',
     },
   ]
 
