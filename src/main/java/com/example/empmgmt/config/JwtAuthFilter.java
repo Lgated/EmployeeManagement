@@ -2,6 +2,7 @@ package com.example.empmgmt.config;
 
 import com.example.empmgmt.security.UserAuthentication;
 import com.example.empmgmt.common.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,24 +46,33 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 //3、解析Token，获取用户名
                 String username = jwtUtil.parseUsername(token);
                 Long userId = jwtUtil.parseUserId(token);
+                String role = jwtUtil.getRoleFromToken(token);
+                String department = jwtUtil.getDepartmentFromToken(token);
+
+                // 解析员工ID（可能为空）
+                Claims claims = jwtUtil.getClaimsFromToken(token);
+                Long employeeId = claims.get("employeeId", Long.class);
 
                 //4、验证Token是否有效
                 //“Token 里有人且 Spring 还没认证过，才继续走 JWT 认证流程，避免重复干活。
                 if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                    //5、创建认证对象
-                    UserAuthentication authentication =
-                            new UserAuthentication(
-                                    username,
-                                    null,  // 密码设为 null（JWT 不需要密码）
-                                    List.of(), // 权限列表（这里为空，可根据需要添加）
-                                    userId // 使用从Token中解析的用户ID
-                            );
+                    //5、创建认证对象（包含完整用户信息）
+                    UserAuthentication authentication = new UserAuthentication(
+                            username,
+                            null,
+                            List.of(),
+                            userId,
+                            role,         // 传入角色
+                            department,   // 传入部门
+                            employeeId    // 传入员工ID
+                    );
 
                     //6. 设置认证详情
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     //7. 将认证信息存入 SecurityContext（Spring Security 的上下文）
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.debug("用户 {} (ID: {}, 角色: {}) 认证成功", username, userId, role);
                 }
             }catch (Exception e){
                 // Token 无效或过期，继续执行（不设置认证信息）

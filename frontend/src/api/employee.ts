@@ -94,3 +94,4 @@ export const getDeptAvgSalaryStats = (): Promise<DeptStats[]> => {
 
 
 
+

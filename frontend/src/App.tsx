@@ -11,7 +11,7 @@ import EmployeeList from './pages/EmployeeList'
 import EmployeeForm from './pages/EmployeeForm'
 import Statistics from './pages/Statistics'
 import OperationLogs from './pages/OperationLogs'
-
+import UserManagement from './pages/UserManagement'
 /**
  * 私有路由组件
  * 用于保护需要登录才能访问的页面
@@ -33,7 +33,7 @@ function App() {
       {/* 公开路由：登录和注册页面 */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      
+     
       {/* 私有路由：需要登录才能访问 */}
       <Route
         path="/"
@@ -55,7 +55,10 @@ function App() {
         <Route path="statistics" element={<Statistics />} />
         
         {/* 操作日志页面 */}
-        <Route path="logs" element={<OperationLogs />} />
+        <Route path="logs" element={<OperationLogs />} />、
+
+        {/* 用户管理页面 */}
+         <Route path="users" element={<UserManagement />} />
       </Route>
       
       {/* 404页面 */}
@@ -65,6 +68,7 @@ function App() {
 }
 
 export default App
+
 
 
 

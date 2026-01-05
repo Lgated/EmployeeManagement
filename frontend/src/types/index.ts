@@ -14,6 +14,12 @@ export interface ApiResult<T> {
 }
 
 /**
+ * 分页结果类型
+ * 对应后端 PageResult<T> 类
+ */
+export interface PageResult<T>
+
+/**
  * 员工信息类型
  * 对应后端 EmployeeResponse
  */
@@ -26,7 +32,7 @@ export interface Employee {
   position?: string
   hireDate: string  // LocalDate 序列化为字符串 "YYYY-MM-DD"
   salary: number    // BigDecimal 序列化为数字
-  avatar?: string   // 头像URL
+  avatar?: string 
   createdAt?: string
   updatedAt?: string
 }
@@ -43,7 +49,7 @@ export interface EmployeeCreateRequest {
   position?: string
   hireDate: string  // "YYYY-MM-DD"
   salary: number
-  avatar?: string   // 头像URL
+  avatar?: string
 }
 
 /**
@@ -58,8 +64,9 @@ export interface EmployeeUpdateRequest {
   position?: string
   hireDate?: string
   salary?: number
-  avatar?: string   // 头像URL
+  avatar?: string
 }
+
 
 /**
  * 部门统计类型
@@ -100,14 +107,18 @@ export interface AuthResponse {
   expiresIn: number
 }
 
-
-
-
-
-
-
-
-
+/**
+ * 用户相关类型和常量（来自 user.ts）
+ */
+export { Role, RoleNames } from './user'
+export type {
+  User,
+  UserCreateRequest,
+  UserUpdateRequest,
+  AssignRoleRequest,
+  ResetPasswordRequest,
+  PageResponse
+} from './user'
 
 
 

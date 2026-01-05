@@ -10,6 +10,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -37,6 +38,9 @@ public class PermissionAspect {
     @Before("@annotation(com.example.empmgmt.common.annotation.RequiresPermission)")
     public void checkPermission(JoinPoint joinPoint){
         Long userId = SecurityUtil.getCurrentUserId();
+        // 添加调试日志
+        log.debug("当前用户ID: {}", userId);
+        log.debug("当前认证信息: {}", SecurityContextHolder.getContext().getAuthentication());
 
         // 获取方法签名
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();

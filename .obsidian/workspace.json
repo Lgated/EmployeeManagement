@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RBAC权限系统设计方案.md",
+                "file": "RBAC权限系统完善方案.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "RBAC权限系统设计方案"
+              "title": "RBAC权限系统完善方案"
             }
           }
         ],
@@ -123,7 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "RBAC权限系统设计方案.md",
+                "file": "RBAC权限系统完善方案.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +133,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for RBAC权限系统设计方案"
+              "title": "Backlinks for RBAC权限系统完善方案"
             }
           },
           {
@@ -142,12 +142,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "RBAC权限系统设计方案.md",
+                "file": "RBAC权限系统完善方案.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from RBAC权限系统设计方案"
+              "title": "Outgoing links from RBAC权限系统完善方案"
             }
           },
           {
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RBAC权限系统设计方案.md",
+                "file": "RBAC权限系统完善方案.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of RBAC权限系统设计方案"
+              "title": "Outline of RBAC权限系统完善方案"
             }
           }
         ]
@@ -214,22 +214,27 @@
   },
   "active": "0a1a110afdba09e6",
   "lastOpenFiles": [
+    "企业级删除策略与用户表设计指南.md",
+    "前端项目说明.md",
+    "权限验证403错误修复方案.md",
     "用户管理功能完整实现方案.md",
-    "frontend/src/pages/UserManagement.tsx",
-    "frontend/src/api/user.ts",
-    "frontend/src/types/user.ts",
-    "生成密码哈希.md",
-    "src/test/java/com/example/empmgmt/PasswordHashGenerator.java",
-    "src/test/java/com/example/empmgmt",
-    "src/test/java/com/example",
-    "src/test/java/com",
-    "src/test/java",
-    "src/test",
-    "RBAC权限系统设计方案.md",
+    "target/classes/com/example/empmgmt/service/Impl/FileServiceImpl.class",
+    "target/classes/com/example/empmgmt/config/FileUploadConfig.class",
+    "target/classes/com/example/empmgmt/common/util/JwtUtil.class",
+    "target/classes/com/example/empmgmt/controller/EmployeeController.class",
+    "src/main/java/com/example/empmgmt/common/util/JwtUtil.java~",
+    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl/PermissionServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl/PermissionServiceImpl$1.class",
+    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl",
     "RBAC权限系统关系图.md",
-    "target/classes/com/example/empmgmt/repository/OperationLogRepository.class",
-    "a.md",
+    "RBAC权限系统设计方案.md",
     "JWT与Spring Security实战：从入门到踩坑.md",
+    "前端报错修复方案.md",
+    "RBAC权限系统完善方案.md",
+    "生成密码哈希.md",
+    "a.md",
     "企业级功能扩展方案.md",
     "frontend/node_modules/json2mq/README.md",
     "frontend/node_modules/@rollup/rollup-win32-x64-msvc/README.md",
@@ -243,12 +248,7 @@
     "frontend/node_modules/es-object-atoms/README.md",
     "frontend/node_modules/es-define-property/README.md",
     "frontend/node_modules/get-intrinsic/README.md",
-    "企业级删除策略与用户表设计指南.md",
     "frontend/node_modules/typescript/SECURITY.md",
-    "frontend/node_modules/picocolors/README.md",
-    "frontend/node_modules/nanoid/README.md",
-    "frontend/node_modules/scroll-into-view-if-needed/README.md",
-    "frontend/node_modules/stylis/README.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zhihu.svg",

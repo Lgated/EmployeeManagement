@@ -46,10 +46,12 @@ public class FileServiceImpl implements FileService {
         String newFilename = UUID.randomUUID().toString() + extension;
 
         // 3、创建目录
-        File destDir = new File(uploadPath + subPath);
+        String normalizedSubPath = subPath.startsWith("/") ? subPath.substring(1) : subPath;
+        File destDir = new File(uploadPath, normalizedSubPath);  // 使用 File(File, String) 构造器更安全
         if (!destDir.exists()) {
             destDir.mkdirs();
         }
+
         // 4、保存文件
         File destFile = new File(destDir, newFilename);
         try {
@@ -57,7 +59,8 @@ public class FileServiceImpl implements FileService {
         } catch (IOException e) {
             throw new BusinessException("文件保存失败: " + e.getMessage());
         }
-        // 5、返回访问URL
-        return "/uploads/" + subPath + "/" + newFilename;
+
+        // 5、返回访问URL（统一格式：/uploads/avatars/xxx.png）
+        return "/uploads/" + normalizedSubPath + "/" + newFilename;
     }
 }

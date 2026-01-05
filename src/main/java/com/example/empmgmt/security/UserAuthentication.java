@@ -14,13 +14,37 @@ import java.util.Collection;
 public class UserAuthentication extends UsernamePasswordAuthenticationToken {
 
     private final Long userId;
+    private final String role;
+    private final String department;
+    private final Long employeeId;
 
-    public UserAuthentication(Object principal, Object credentials,
-                              // principal -> 用户名/UserDetails对象 || credentials -> 密码（通常后面会清空）
-            Collection<? extends GrantedAuthority> authorities // 权限集合
-            ,Long userId) {
-        super(principal, credentials,authorities);
+    // principal -> 用户名/UserDetails对象 || credentials -> 密码（通常后面会清空）
+    //authorities： 权限集合
+    /**
+     * 构造函数
+     * @param principal 用户名
+     * @param credentials 密码（通常为 null）
+     * @param authorities 权限集合
+     * @param userId 用户ID
+     * @param role 用户角色
+     * @param department 用户部门
+     * @param employeeId 关联的员工ID
+     */
+    public UserAuthentication(
+            Object principal,
+            Object credentials,
+            Collection<? extends GrantedAuthority> authorities,
+            Long userId,
+            String role,
+            String department,
+            Long employeeId
+    ) {
+        super(principal, credentials, authorities);
         this.userId = userId;
+        this.role = role;
+        this.department = department;
+        this.employeeId = employeeId;
     }
+
 
 }
