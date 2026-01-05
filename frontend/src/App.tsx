@@ -12,6 +12,26 @@ import EmployeeForm from './pages/EmployeeForm'
 import Statistics from './pages/Statistics'
 import OperationLogs from './pages/OperationLogs'
 import UserManagement from './pages/UserManagement'
+
+
+
+export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+  return children
+}
+
+export const RequireRole: React.FC<{ roles: string[]; children: JSX.Element }> = ({ roles, children }) => {
+  const { role } = useAuthStore()
+  if (!role || !roles.includes(role)) {
+    // 可以跳到一个403页面，这里先简单重定向到员工列表
+    return <Navigate to="/employees" replace />
+  }
+  return children
+}
+
 /**
  * 私有路由组件
  * 用于保护需要登录才能访问的页面
@@ -29,41 +49,51 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
   return (
-    <Routes>
-      {/* 公开路由：登录和注册页面 */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-     
-      {/* 私有路由：需要登录才能访问 */}
-      <Route
-        path="/"
-        element={
-          <PrivateRoute>
-            <Layout />
-          </PrivateRoute>
-        }
-      >
-        {/* 默认重定向到员工列表 */}
-        <Route index element={<Navigate to="/employees" replace />} />
-        
-        {/* 员工管理路由 */}
-        <Route path="employees" element={<EmployeeList />} />
-        <Route path="employees/new" element={<EmployeeForm />} />
-        <Route path="employees/:id/edit" element={<EmployeeForm />} />
-        
-        {/* 统计页面 */}
-        <Route path="statistics" element={<Statistics />} />
-        
-        {/* 操作日志页面 */}
-        <Route path="logs" element={<OperationLogs />} />、
+<Routes>
+  <Route path="/login" element={<Login />} />
+  <Route path="/register" element={<Register />} />
 
-        {/* 用户管理页面 */}
-         <Route path="users" element={<UserManagement />} />
-      </Route>
-      
-      {/* 404页面 */}
-      <Route path="*" element={<Navigate to="/employees" replace />} />
-    </Routes>
+  <Route
+    path="/"
+    element={
+      <RequireAuth>
+        <Layout />
+      </RequireAuth>
+    }
+  >
+    <Route path="employees" element={<EmployeeList />} />
+    <Route path="employees/new" element={<EmployeeForm />} />
+    <Route path="employees/:id/edit" element={<EmployeeForm />} />
+
+    {/* 只有超级管理员能访问用户管理页 */}
+    <Route
+      path="users"
+      element={
+        <RequireRole roles={['SUPER_ADMIN']}>
+          <UserManagement />
+        </RequireRole>
+      }
+    />
+
+    {/* 统计、日志也可以根据角色做限制 */}
+    <Route
+      path="statistics"
+      element={
+        <RequireRole roles={['SUPER_ADMIN', 'MANAGER']}>
+          <Statistics />
+        </RequireRole>
+      }
+    />
+    <Route
+      path="logs"
+      element={
+        <RequireRole roles={['SUPER_ADMIN']}>
+          <OperationLogs />
+        </RequireRole>
+      }
+    />
+  </Route>
+</Routes>
   )
 }
 

@@ -12,10 +12,22 @@ interface AuthState {
   token: string | null
   // 用户名
   username: string | null
-  
+  //角色
+  role: string | null
+  //部门
+  department: string | null
+  //员工id
+  employeeId: number | null
+
   // 设置登录信息
-  setAuth: (token: string, username: string) => void
-  // 清除登录信息（退出登录）
+  setAuth: (
+    token: string,
+    username: string,
+    role: string,
+    department?: string,
+    employeeId?: number
+  ) => void
+  // 清除登录信息
   clearAuth: () => void
 }
 
@@ -29,31 +41,38 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       token: null,
       username: null,
-      
-      // 设置认证信息
-      setAuth: (token: string, username: string) => {
-        // 同时保存到localStorage（用于axios拦截器）
-        localStorage.setItem('token', token)
-        set({
-          isAuthenticated: true,
-          token,
-          username,
-        })
-      },
-      
-      // 清除认证信息
-      clearAuth: () => {
-        localStorage.removeItem('token')
-        set({
-          isAuthenticated: false,
-          token: null,
-          username: null,
-        })
-      },
-    }),
-    {
-      name: 'auth-storage', // localStorage的key
-    }
-  )
-)
+      role: null,
+      department: null,
+      employeeId: null,
 
+      // ✅ 改造：设置认证信息（包含角色）
+            setAuth: (token, username, role, department, employeeId) => {
+              localStorage.setItem('token', token)
+              set({
+                isAuthenticated: true,
+                token,
+                username,
+                role,
+                department,
+                employeeId,
+              })
+            },
+
+            // 清除认证信息
+            clearAuth: () => {
+              localStorage.removeItem('token')
+              set({
+                isAuthenticated: false,
+                token: null,
+                username: null,
+                role: null,
+                department: null,
+                employeeId: null,
+              })
+            },
+          }),
+          {
+            name: 'auth-storage',
+          }
+        )
+      )

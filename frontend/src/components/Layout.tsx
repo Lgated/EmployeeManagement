@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { Layout as AntLayout, Menu, Avatar, Dropdown, Button } from 'antd'
+import type { MenuProps } from 'antd'
 import {
   UserOutlined,
   TeamOutlined,
@@ -15,7 +16,43 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons'
 import { useAuthStore } from '../stores/authStore'
-import type { MenuProps } from 'antd'
+
+type RoleCode = 'SUPER_ADMIN' | 'MANAGER' | 'EMPLOYEE'
+
+interface AppMenuItem {
+  key: string
+  label: string
+  icon: React.ReactNode
+  roles: RoleCode[]        // 允许访问的角色
+}
+
+const rawMenuItems: AppMenuItem[] = [
+  {
+    key: '/employees',
+    icon: <TeamOutlined />,
+    label: '员工管理',
+    roles: ['SUPER_ADMIN', 'MANAGER', 'EMPLOYEE'], // 所有人可见
+  },
+  {
+    key: '/statistics',
+    icon: <BarChartOutlined />,
+    label: '数据统计',
+    roles: ['SUPER_ADMIN', 'MANAGER'],             // 管理层可见
+  },
+  {
+    key: '/logs',
+    icon: <FileTextOutlined />,
+    label: '操作日志',
+    roles: ['SUPER_ADMIN'],                        // 只有超管可见
+  },
+  {
+    key: '/users',
+    icon: <UserOutlined />,
+    label: '用户管理',
+    roles: ['SUPER_ADMIN'],                        // 只有超管可见
+  },
+]
+
 
 const { Header, Sider, Content } = AntLayout
 
@@ -23,26 +60,16 @@ const Layout = () => {
   const [collapsed, setCollapsed] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const { username, clearAuth } = useAuthStore()
+  const { username, role, clearAuth } = useAuthStore()
 
-  // 菜单项配置
-  const menuItems: MenuProps['items'] = [
-    {
-      key: '/employees',
-      icon: <TeamOutlined />,
-      label: '员工管理',
-    },
-    {
-      key: '/statistics',
-      icon: <BarChartOutlined />,
-      label: '数据统计',
-    },
-    {
-      key: '/logs',
-      icon: <FileTextOutlined />,
-      label: '操作日志',
-    },
-  ]
+  // 菜单项配置：根据当前角色过滤菜单
+  const menuItems: MenuProps['items'] = rawMenuItems
+    .filter((item) => !role || item.roles.includes(role as RoleCode))
+    .map((item) => ({
+      key: item.key,
+      icon: item.icon,
+      label: item.label,
+    }))
 
   // 处理菜单点击
   const handleMenuClick = ({ key }: { key: string }) => {
@@ -136,7 +163,6 @@ const Layout = () => {
 }
 
 export default Layout
-
 
 
 

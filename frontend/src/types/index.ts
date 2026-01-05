@@ -105,6 +105,10 @@ export interface AuthResponse {
   token: string
   tokenType: string
   expiresIn: number
+  username?: string
+  role?: string
+  department?: string
+  employeeId?: number
 }
 
 /**

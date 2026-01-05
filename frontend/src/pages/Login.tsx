@@ -26,7 +26,14 @@ const Login = () => {
       const response = await login(values)
       
       // 保存Token和用户名到状态管理
-      setAuth(response.token, values.username)
+      // 使用后端返回的用户名和角色信息，而不是表单里的 username
+      setAuth(
+        response.token,
+        response.username || values.username,
+        response.role || 'EMPLOYEE',
+        response.department,
+        response.employeeId
+      )
       
       message.success('登录成功')
       

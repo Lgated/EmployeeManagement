@@ -27,7 +27,7 @@ import {
 } from '../api/employee'
 import type { Employee } from '../types'
 import dayjs from 'dayjs'
-import { useLocation } from 'react-router-dom'
+import { useAuthStore } from '../stores/authStore'
 
 const { Search } = Input
 const { Option } = Select
@@ -41,6 +41,8 @@ const EmployeeList = () => {
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [total, setTotal] = useState(0)
+  const { role } = useAuthStore()
+  const canManageEmployee = role === 'SUPER_ADMIN' || role === 'MANAGER'
 
 
   /**
@@ -195,16 +197,18 @@ const EmployeeList = () => {
           >
             编辑
           </Button>
-          <Popconfirm
-            title="确定要删除这名员工吗？"
-            onConfirm={() => handleDelete(record.id)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button type="link" danger icon={<DeleteOutlined />}>
-              删除
-            </Button>
-          </Popconfirm>
+          {canManageEmployee && (
+            <Popconfirm
+              title="确定要删除这名员工吗？"
+              onConfirm={() => handleDelete(record.id)}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button type="link" danger icon={<DeleteOutlined />}>
+                删除
+              </Button>
+            </Popconfirm>
+          )}
         </Space>
       ),
     },
@@ -214,13 +218,15 @@ const EmployeeList = () => {
     <Card
       title="员工管理"
       extra={
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate('/employees/new')}
-        >
-          新增员工
-        </Button>
+        canManageEmployee && (
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/employees/new')}
+          >
+            新增员工
+          </Button>
+        )
       }
     >
       {/* 搜索栏 */}

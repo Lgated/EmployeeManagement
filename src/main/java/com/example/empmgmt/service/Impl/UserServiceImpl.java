@@ -67,7 +67,14 @@ public class UserServiceImpl implements UserService {
 
         //生成token
         String token = jwtUtil.generateToken(user);
-        return AuthResponse.of(token, jwtUtil.getExpirationTime());
+        return AuthResponse.of(
+                token,
+                jwtUtil.getExpirationTime(),
+                user.getUsername(),
+                user.getRole(),
+                user.getDepartment(),
+                user.getEmployeeId()
+        );
     }
 
     @Override
@@ -90,7 +97,14 @@ public class UserServiceImpl implements UserService {
 
         // 生成token
         String token = jwtUtil.generateToken(user);
-        return AuthResponse.of(token,jwtUtil.getExpirationTime());
+        return AuthResponse.of(
+                token,
+                jwtUtil.getExpirationTime(),
+                user.getUsername(),
+                user.getRole(),
+                user.getDepartment(),
+                user.getEmployeeId()
+        );
     }
 
     //TODO:不懂
