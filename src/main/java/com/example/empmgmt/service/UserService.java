@@ -7,6 +7,9 @@ import com.example.empmgmt.dto.request.UserUpdateRequest;
 import com.example.empmgmt.dto.response.AuthResponse;
 import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.dto.response.UserResponse;
+import com.example.empmgmt.dto.response.UserWithEmployeeDTO;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -39,4 +42,36 @@ public interface UserService {
 
     //重置密码
     void resetPassword(Long id,String newPassword);
+
+    /**
+     * 场景：用户管理页面显示员工信息
+     * 分页查询用户列表（包含员工详细信息）
+     */
+    PageResponse<UserWithEmployeeDTO> pageQueryWithEmployee(
+            String username, String role, Boolean enabled, int page, int size
+    );
+
+    /**
+     * 场景2：根据员工信息查找用户账号
+     * 根据员工姓名查找用户
+     */
+    UserResponse findByEmployeeName(String employeeName);
+
+    /**
+     * 场景4：员工离职时检查用户账号
+     * 根据员工ID查找关联的用户
+     */
+    List<UserResponse> findUsersByEmployeeId(Long employeeId);
+
+    /**
+     * 场景5：创建用户时自动关联员工信息
+     * 创建用户并加载员工信息
+     */
+    UserResponse createWithEmployee(UserCreateRequest request);
+
+    /**
+     * 场景6：员工离职时处理用户账号
+     * 处理员工离职相关的用户账号
+     */
+    void handleEmployeeResignation(Long employeeId);
 }

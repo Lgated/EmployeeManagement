@@ -6,6 +6,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -55,4 +57,16 @@ public class Employee {
 
     @Column(name = "updated_by")
     private Long updatedBy;
+
+    /**
+     * 反向关联：一个员工可能对应多个用户账号
+     *
+     * @OneToMany: 一对多关系
+     * mappedBy = "employee": 指定User实体中的employee字段作为关联的拥有方
+     * fetch = FetchType.LAZY: 懒加载，避免N+1查询
+     * cascade = CascadeType.ALL: 级联操作（可选，根据业务需求决定） // TODO: 什么是级联操作？是否需要级联操作？
+     */
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<User> users = new ArrayList<>();
+
 }

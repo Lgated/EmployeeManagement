@@ -11,6 +11,7 @@ import com.example.empmgmt.dto.request.UserUpdateRequest;
 import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.dto.response.UserResponse;
+import com.example.empmgmt.dto.response.UserWithEmployeeDTO;
 import com.example.empmgmt.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +32,9 @@ public class UserController {
      * 获取用户列表（仅超级管理员）
      * 支持分页和筛选
      */
-    @OperationLog(
-            module = "USER",
-            type = OperationType.QUERY,
-            description = "查询用户列表"
-    )
     @GetMapping
     @RequiresRole("SUPER_ADMIN")
-    public Result<List<UserResponse>> list(
+    public Result<PageResponse<UserResponse>> list(
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String role,
             @RequestParam(required = false) Boolean enabled,
@@ -46,7 +42,7 @@ public class UserController {
             @RequestParam(defaultValue = "10") int size
     ) {
         PageResponse<UserResponse> userResponsePageResponse = userService.pageQuery(username, role, enabled, page, size);
-        return Result.success(userResponsePageResponse.records());
+        return Result.success(userResponsePageResponse);
     }
 
     /**
@@ -54,11 +50,6 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @RequiresRole("SUPER_ADMIN")
-    @OperationLog(
-            module = "USER",
-            type = OperationType.QUERY,
-            description = "查询用户详情"
-    )
     public Result<UserResponse> getById(@PathVariable Long id) {
         UserResponse user = userService.findById(id);
         return Result.success(user);
@@ -174,6 +165,80 @@ public class UserController {
     ) {
         userService.resetPassword(id, request.getNewPassword());
         return Result.success("重置密码成功", null);
+    }
+
+    /**
+     * 场景1：用户管理页面显示员工信息
+     * 获取用户列表（包含员工详细信息）
+     */
+    @GetMapping("/with-employee")
+    @RequiresRole("SUPER_ADMIN")
+    public Result<PageResponse<UserWithEmployeeDTO>> listWithEmployee(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) Boolean enabled,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageResponse<UserWithEmployeeDTO> result = userService.pageQueryWithEmployee(
+                username, role, enabled, page, size
+        );
+        return Result.success(result);
+    }
+
+    /**
+     * 场景2：根据员工信息查找用户账号
+     * 根据员工姓名查找用户
+     */
+    @GetMapping("/by-employee-name/{employeeName}")
+    @RequiresRole("SUPER_ADMIN")
+    public Result<UserResponse> getByEmployeeName(@PathVariable String employeeName) {
+        UserResponse user = userService.findByEmployeeName(employeeName);
+        return Result.success(user);
+    }
+
+    /**
+     * 场景4：员工离职时检查用户账号
+     * 根据员工ID查找关联的用户
+     */
+    @GetMapping("/by-employee-id/{employeeId}")
+    @RequiresRole("SUPER_ADMIN")
+    public Result<List<UserResponse>> getByEmployeeId(@PathVariable Long employeeId) {
+        List<UserResponse> users = userService.findUsersByEmployeeId(employeeId);
+        return Result.success(users);
+    }
+
+    /**
+     * 场景4：员工离职处理
+     * 禁用员工关联的所有用户账号
+     */
+    @PutMapping("/handle-resignation/{employeeId}")
+    @RequiresRole("SUPER_ADMIN")
+    @OperationLog(
+            module = "USER",
+            type = OperationType.UPDATE,
+            description = "处理员工离职，禁用关联用户账号"
+    )
+    public Result<Void> handleEmployeeResignation(@PathVariable Long employeeId) {
+        userService.handleEmployeeResignation(employeeId);
+        return Result.success("处理成功", null);
+    }
+
+    /**
+     * 场景5：创建用户时自动关联员工信息
+     * 创建用户并加载员工信息
+     */
+    @PostMapping("/with-employee")
+    @RequiresRole("SUPER_ADMIN")
+    @OperationLog(
+            module = "USER",
+            type = OperationType.CREATE,
+            description = "创建用户并加载员工信息",
+            saveResult = true
+    )
+    public Result<UserResponse> createWithEmployee(@Valid @RequestBody UserCreateRequest request) {
+        UserResponse user = userService.createWithEmployee(request);
+        return Result.success("创建成功", user);
     }
 
 }

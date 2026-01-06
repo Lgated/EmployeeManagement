@@ -15,9 +15,14 @@ export interface ApiResult<T> {
 
 /**
  * 分页结果类型
- * 对应后端 PageResult<T> 类
+ * 对应后端 PageResponse<T> 类
  */
-export interface PageResult<T>
+export interface PageResult<T> {
+  records: T[]
+  total: number
+  page: number
+  size: number
+}
 
 /**
  * 员工信息类型

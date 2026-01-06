@@ -34,6 +34,12 @@ const rawMenuItems: AppMenuItem[] = [
     roles: ['SUPER_ADMIN', 'MANAGER', 'EMPLOYEE'], // 所有人可见
   },
   {
+    key: '/users',
+    icon: <UserOutlined />,
+    label: '用户管理',
+    roles: ['SUPER_ADMIN'],                        // 只有超管可见
+  },
+  {
     key: '/statistics',
     icon: <BarChartOutlined />,
     label: '数据统计',
@@ -43,12 +49,6 @@ const rawMenuItems: AppMenuItem[] = [
     key: '/logs',
     icon: <FileTextOutlined />,
     label: '操作日志',
-    roles: ['SUPER_ADMIN'],                        // 只有超管可见
-  },
-  {
-    key: '/users',
-    icon: <UserOutlined />,
-    label: '用户管理',
     roles: ['SUPER_ADMIN'],                        // 只有超管可见
   },
 ]

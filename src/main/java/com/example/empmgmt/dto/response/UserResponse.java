@@ -20,6 +20,12 @@ public class UserResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private String employeeName;        // 员工姓名
+    private String employeeDepartment;  // 员工部门
+    private String employeePosition;    // 员工职位
+    /**
+     * 从User实体转换为UserResponse
+     */
     /**
      * 从User实体转换为UserResponse
      */
@@ -34,6 +40,15 @@ public class UserResponse {
         response.setEnabled(user.getEnabled());
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
+
+        // ========== 新增：填充员工信息 ==========
+        if (user.getEmployee() != null) {
+            com.example.empmgmt.domain.Employee emp = user.getEmployee();
+            response.setEmployeeName(emp.getName());
+            response.setEmployeeDepartment(emp.getDepartment());
+            response.setEmployeePosition(emp.getPosition());
+        }
+
         return response;
     }
 

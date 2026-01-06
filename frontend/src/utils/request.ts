@@ -68,7 +68,6 @@ request.interceptors.response.use(
           window.location.href = '/login'
           break
         case 403:
-          message.error('没有权限访问该资源')
           break
         case 404:
           message.error('请求的资源不存在')
@@ -92,6 +91,8 @@ request.interceptors.response.use(
 )
 
 export default request
+
+
 
 
 

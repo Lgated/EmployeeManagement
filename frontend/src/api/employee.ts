@@ -3,18 +3,27 @@
  * 处理员工的增删改查和统计请求
  */
 import request from '../utils/request'
-import { Employee, EmployeeCreateRequest, EmployeeUpdateRequest, DeptStats } from '../types'
+import { Employee, EmployeeCreateRequest, EmployeeUpdateRequest, DeptStats, PageResult } from '../types'
 
 /**
- * 获取所有员工列表
+ * 获取所有员工列表（支持分页）
  * @param name 可选：按姓名搜索
  * @param department 可选：按部门搜索
- * @returns 员工列表
+ * @param page 页码，从1开始
+ * @param size 每页大小
+ * @returns 分页员工列表
  */
-export const getEmployeeList = (name?: string, department?: string): Promise<Employee[]> => {
-  const params: Record<string, string> = {}
+export const getEmployeeList = (
+  name?: string, 
+  department?: string, 
+  page?: number, 
+  size?: number
+): Promise<PageResult<Employee>> => {
+  const params: Record<string, string | number> = {}
   if (name) params.name = name
   if (department) params.department = department
+  if (page) params.page = page
+  if (size) params.size = size
   
   return request.get('/employ', { params })
 }
