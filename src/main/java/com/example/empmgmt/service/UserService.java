@@ -1,5 +1,6 @@
 package com.example.empmgmt.service;
 
+import com.example.empmgmt.domain.User;
 import com.example.empmgmt.dto.request.LoginRequest;
 import com.example.empmgmt.dto.request.RegisterRequest;
 import com.example.empmgmt.dto.request.UserCreateRequest;
@@ -18,6 +19,11 @@ public interface UserService {
 
     //登录
     AuthResponse login(LoginRequest request);
+
+    /**
+     * 用户登录并返回 User 对象（由 Controller 生成双 Token）
+     */
+    User loginAndGetUser(LoginRequest request);
 
     //分页查询用户列表
     PageResponse<UserResponse> pageQuery(String name,String role,Boolean enabled,int page,int size);
@@ -74,4 +80,11 @@ public interface UserService {
      * 处理员工离职相关的用户账号
      */
     void handleEmployeeResignation(Long employeeId);
+
+    /**
+     * 将UserResponse转换为User实体
+     * @param byId
+     * @return
+     */
+    User toEntity(UserResponse byId);
 }

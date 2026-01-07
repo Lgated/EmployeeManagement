@@ -84,6 +84,16 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- pom.xml -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <!-- Spring Boot Cache -->
         <!-- Spring Boot Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

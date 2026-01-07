@@ -72,11 +72,11 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         userRepository.save(user);
 
-        //生成token
-        String token = jwtUtil.generateToken(user);
+        // 生成AccessToken,注册时只生成AT，RT 在需要时通过刷新获取
+        jwtUtil.generateAccessToken(user,"web");
         return AuthResponse.of(
-                token,
-                jwtUtil.getExpirationTime(),
+                toString(),
+                jwtUtil.getAccessTtlMs(),
                 user.getUsername(),
                 user.getRole(),
                 user.getDepartment(),
@@ -84,10 +84,37 @@ public class UserServiceImpl implements UserService {
         );
     }
 
+    /**
+     * 旧登录方法 ： 保留兼容性，生成单token
+     * @param request
+     * @return
+     */
     @Override
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
+        //使用新的loginAndGetUser方法
+        User user = loginAndGetUser(request);
 
+        //生成accessToken
+        String token = jwtUtil.generateAccessToken(user, "web");
+        return AuthResponse.of(
+                token,
+                jwtUtil.getAccessTtlMs(),
+                user.getUsername(),
+                user.getRole(),
+                user.getDepartment(),
+                user.getEmployeeId()
+        );
+    }
+
+    /**
+     * 用户登录并返回 User 对象（由 Controller 生成双 Token）
+     * @param request
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public User loginAndGetUser(LoginRequest request) {
         // 查找用户
         User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new IllegalArgumentException("用户名或密码错误"));
@@ -102,16 +129,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("用户已被禁用");
         }
 
-        // 生成token
-        String token = jwtUtil.generateToken(user);
-        return AuthResponse.of(
-                token,
-                jwtUtil.getExpirationTime(),
-                user.getUsername(),
-                user.getRole(),
-                user.getDepartment(),
-                user.getEmployeeId()
-        );
+        return user;
     }
 
     //TODO:不懂
@@ -445,6 +463,19 @@ public class UserServiceImpl implements UserService {
         } else {
             log.info("员工 {} 离职，没有关联的用户账号", employeeId);
         }
+    }
+
+    @Override
+    public User toEntity(UserResponse byId) {
+        User user = new User();
+        user.setId(byId.getId());
+        user.setUsername(byId.getUsername());
+        user.setEmail(byId.getEmail());
+        user.setRole(byId.getRole());
+        user.setDepartment(byId.getDepartment());
+        user.setEmployeeId(byId.getEmployeeId());
+        user.setEnabled(byId.getEnabled());
+        return user;
     }
 
     private void validateRoleAndDepartment(String role, String department) {
