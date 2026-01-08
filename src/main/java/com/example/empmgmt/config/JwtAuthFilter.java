@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.getClaimsFromToken(token);
                 String jti = claims.get("jti", String.class);
 
-                // 3. 检查是否在黑名单中（登出后的Token）
+                // 4、 检查是否在黑名单中（登出后的Token）
                 if (authTokenService.isBlacklisted(jti)) {
                     log.warn("Token已被加入黑名单");
                     // 不设置认证信息，后续会被Spring Security拒绝

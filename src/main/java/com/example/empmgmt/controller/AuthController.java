@@ -15,6 +15,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,9 @@ import java.time.Duration;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    @Value("${app.https.enabled}")
+    private boolean httpEnabled;
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
@@ -57,7 +61,7 @@ public class AuthController {
     @PostMapping("/login")
     public Result<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse resp, HttpServletRequest req) {
         User user = userService.loginAndGetUser(request); // 假设返回 User，包含角色等
-        String device = resolveDevice(request);
+        String device = resolveDevice(req);
 
         String at = jwtUtil.generateAccessToken(user, device);
         String rt = jwtUtil.generateRefreshToken(user, device);
@@ -86,7 +90,7 @@ public class AuthController {
         String rt = extractRefreshToken(req);
 
         if (rt == null) {
-           throw new PermissionDeniedException("缺少刷新令牌");
+            throw new PermissionDeniedException("缺少刷新令牌");
         }
 
         // 解析 RT
@@ -96,8 +100,9 @@ public class AuthController {
         String jti = claims.get("jti", String.class);
 
         // Redis 对比
-        String keyRt = authTokenService.getRefreshToken(userId, device).orElseThrow(null);
-        if (keyRt == null || !keyRt.equals(rt)){
+        String keyRt = authTokenService.getRefreshToken(userId, device)
+                .orElseThrow(() -> new PermissionDeniedException("刷新令牌不存在"));
+        if (!keyRt.equals(rt)){
             throw new PermissionDeniedException("刷新令牌已失效");
         }
 
@@ -106,7 +111,11 @@ public class AuthController {
         User user = userService.toEntity(byId);
         String newAt = jwtUtil.generateAccessToken(user, device);
         String newRt = jwtUtil.generateRefreshToken(user, device);
-        // 存 Redis
+
+        // 删除旧的RT（显式删除，确保安全）
+        authTokenService.deleteRefreshToken(userId, device);
+
+        // 存新的RT到 Redis
         authTokenService.saveRefreshToken(userId, device, newRt, Duration.ofMillis(jwtUtil.getRefreshTtlMs()));
         // 重写 Cookie
         setRefreshCookie(resp, newRt, (int) (jwtUtil.getRefreshTtlMs() / 1000));
@@ -130,10 +139,10 @@ public class AuthController {
 
         if (at != null) {
             // 将当前 AT 加入黑名单
-
             Claims atClaims = jwtUtil.parseToken(at);
             String jti = atClaims.get("jti", String.class);
             Long expMillis = atClaims.getExpiration().getTime() - System.currentTimeMillis();
+            // at剩余时间为黑名单存活时间，不需要手动清楚黑名单
             if (expMillis > 0) {
                 authTokenService.blacklistAccessToken(jti, Duration.ofMillis(expMillis));
             }
@@ -155,7 +164,7 @@ public class AuthController {
     // 设置 Refresh Token Cookie
     private void setRefreshCookie(HttpServletResponse resp, String rt, int maxAgeSeconds) {
         ResponseCookie cookie = ResponseCookie.from("rt", rt)
-                .httpOnly(true)
+                .httpOnly(httpEnabled)
                 .secure(true)           // 生产环境 HTTPS 必须 true
                 .sameSite("None")       // 若前后端跨域，需 None + Secure
                 .path("/")
@@ -167,7 +176,7 @@ public class AuthController {
     // 注销时使 Refresh Token Cookie 过期
     private void expireRefreshCookie(HttpServletResponse resp) {
         ResponseCookie cookie = ResponseCookie.from("rt", "")
-                .httpOnly(true)        // 仅后端可访问
+                .httpOnly(httpEnabled)        // 仅后端可访问
                 .secure(true)
                 .sameSite("None")      // 若前后端跨域，需 None + Secure
                 .path("/")
@@ -196,5 +205,48 @@ public class AuthController {
             return auth.substring(7);
         }
         return null;
+    }
+
+    /**
+     * 解析设备指纹
+     * 基于User-Agent和IP地址生成设备标识
+     */
+    private String resolveDevice(HttpServletRequest request) {
+        // 获取User-Agent
+        String userAgent = request.getHeader("User-Agent");
+        if (userAgent == null || userAgent.isBlank()) {
+            userAgent = "Unknown";
+        }
+
+        // 获取IP地址
+        String ip = getClientIpAddress(request);
+
+        // 组合生成设备指纹（使用User-Agent + IP的哈希值）
+        String deviceFingerprint = userAgent + "|" + ip;
+        return String.valueOf(deviceFingerprint.hashCode());
+    }
+
+    /**
+     * 获取客户端真实IP地址
+     */
+    private String getClientIpAddress(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        // 处理多个IP的情况，取第一个
+        if (ip != null && ip.contains(",")) {
+            ip = ip.split(",")[0].trim();
+        }
+        return ip != null ? ip : "0.0.0.0";
     }
 }

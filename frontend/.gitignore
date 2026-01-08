@@ -33,7 +33,12 @@ lerna-debug.log*
 
 # OS
 Thumbs.db
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
 
+### Obsidian ###
+.obsidian/
 
 
 

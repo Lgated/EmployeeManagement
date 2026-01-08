@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/无感刷新和HTTP传输详解.md",
+                "file": "docs/后端评估和前端改造指南.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "无感刷新和HTTP传输详解"
+              "title": "后端评估和前端改造指南"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/无感刷新和HTTP传输详解.md",
+                "file": "docs/后端评估和前端改造指南.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 无感刷新和HTTP传输详解"
+              "title": "Backlinks for 后端评估和前端改造指南"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/无感刷新和HTTP传输详解.md",
+                "file": "docs/后端评估和前端改造指南.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 无感刷新和HTTP传输详解"
+              "title": "Outgoing links from 后端评估和前端改造指南"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/无感刷新和HTTP传输详解.md",
+                "file": "docs/后端评估和前端改造指南.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 无感刷新和HTTP传输详解"
+              "title": "Outline of 后端评估和前端改造指南"
             }
           }
         ]
@@ -185,20 +185,27 @@
   },
   "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
-    "docs/后端评估和前端改造指南.md",
-    "docs/无感刷新和HTTP传输详解.md",
-    "docs/双Token机制详解.md",
-    "docs/前端改造完成总结.md",
-    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/Impl/PermissionServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/Impl/PermissionServiceImpl$1.class",
-    "target/classes/com/example/empmgmt/service/Impl/FileServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl.class",
-    "target/classes/com/example/empmgmt/security/UserAuthentication.class",
-    "target/classes/com/example/empmgmt/security",
-    "target/classes/com/example/empmgmt/repository/UserRepository.class",
-    "target/classes/com/example/empmgmt/repository/EmployeeRepository.class",
-    "target/classes/com/example/empmgmt/EmpMgmtApplication.class",
+    "frontend/node_modules/@ant-design/icons-svg/lib/asn/ZoomOutOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/es/asn/ZoomOutOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/lib/asn/ZoomInOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/es/asn/ZoomInOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/lib/asn/ZhihuSquareFilled.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/es/asn/ZhihuSquareFilled.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/lib/asn/ZhihuOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/es/asn/ZhihuOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/lib/asn/ZhihuCircleFilled.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/es/asn/ZhihuCircleFilled.d.ts",
+    "frontend/node_modules/@ant-design/icons-svg/lib/asn/YuqueOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/docs/demo/use-iconfontcn.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/simple.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/tooltip.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/two-tone.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/root-class.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/loadModules.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/custom-icon.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/basic.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/ant-design-twotone-demo.md",
+    "frontend/node_modules/@ant-design/icons/docs/demo/all-icons.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zhihu.svg",
@@ -209,27 +216,20 @@
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/woman.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/windows.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/wifi.svg",
-    "frontend/node_modules/caniuse-lite/README.md",
-    "frontend/node_modules/react-router-dom/CHANGELOG.md",
-    "frontend/node_modules/nanoid/README.md",
-    "frontend/node_modules/postcss/README.md",
-    "frontend/node_modules/throttle-debounce/LICENSE.md",
-    "frontend/node_modules/function-bind/README.md",
-    "frontend/node_modules/function-bind/CHANGELOG.md",
-    "frontend/node_modules/scroll-into-view-if-needed/README.md",
-    "frontend/node_modules/stylis/README.md",
-    "frontend/node_modules/rc-drawer/README.md",
-    "frontend/node_modules/use-sync-external-store/README.md",
-    "frontend/node_modules/toggle-selection/README.md",
-    "frontend/node_modules/hasown/README.md",
-    "frontend/node_modules/hasown/CHANGELOG.md",
-    "frontend/node_modules/mime-types/README.md",
-    "frontend/node_modules/mime-types/HISTORY.md",
-    "frontend/node_modules/dayjs/README.md",
-    "frontend/node_modules/dayjs/CHANGELOG.md",
-    "frontend/node_modules/escalade/readme.md",
-    "frontend/node_modules/es-define-property/README.md",
-    "frontend/node_modules/es-define-property/CHANGELOG.md",
-    "frontend/node_modules/lru-cache/README.md"
+    "frontend/node_modules/@ant-design/cssinjs/LICENSE.md",
+    "frontend/node_modules/rollup/README.md",
+    "frontend/node_modules/rc-tabs/README.md",
+    "frontend/node_modules/@jridgewell/sourcemap-codec/README.md",
+    "frontend/node_modules/jsesc/README.md",
+    "frontend/node_modules/@babel/traverse/README.md",
+    "frontend/node_modules/@babel/template/README.md",
+    "docs/无感刷新机制和HTTP传输详解.md",
+    "docs/双Token机制详解.md",
+    "docs/后端评估和前端改造指南.md",
+    "docs/前端改造完成总结.md",
+    "生成密码哈希.md",
+    "权限验证403错误修复方案.md",
+    "前端项目说明.md",
+    "前端用户管理功能实现指南.md"
   ]
 }
