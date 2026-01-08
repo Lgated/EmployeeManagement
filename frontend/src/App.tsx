@@ -15,11 +15,18 @@ import UserManagement from './pages/UserManagement'
 
 
 
+/**
+ * 路由守卫组件：要求用户已登录
+ * 检查isAuthenticated和token，确保用户真正已登录
+ */
 export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  if (!isAuthenticated) {
+  const { isAuthenticated, token } = useAuthStore()
+  
+  // 如果未登录或没有token，重定向到登录页
+  if (!isAuthenticated || !token) {
     return <Navigate to="/login" replace />
   }
+  
   return children
 }
 
@@ -33,14 +40,14 @@ export const RequireRole: React.FC<{ roles: string[]; children: JSX.Element }> =
 }
 
 /**
- * 私有路由组件
+ * 私有路由组件（已废弃，使用RequireAuth替代）
  * 用于保护需要登录才能访问的页面
  */
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated, token } = useAuthStore()
   
-  // 如果未登录，重定向到登录页
-  if (!isAuthenticated) {
+  // 如果未登录或没有token，重定向到登录页
+  if (!isAuthenticated || !token) {
     return <Navigate to="/login" replace />
   }
   
@@ -98,6 +105,7 @@ function App() {
 }
 
 export default App
+
 
 
 

@@ -2,6 +2,7 @@ package com.example.empmgmt.config;
 
 import com.example.empmgmt.security.UserAuthentication;
 import com.example.empmgmt.common.util.JwtUtil;
+import com.example.empmgmt.service.Impl.AuthTokenService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,9 +22,11 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final AuthTokenService authTokenService;
 
-    public JwtAuthFilter(JwtUtil jwtUtil){
+    public JwtAuthFilter(JwtUtil jwtUtil, AuthTokenService authTokenService){
         this.jwtUtil = jwtUtil;
+        this.authTokenService = authTokenService;
     }
 
 
@@ -33,28 +36,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-
-
         // 1、从请求头中获取token
         String authHeader = request.getHeader("Authorization");
+
 
         // 2、检查Token 格式（Bearer <token>）
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             String token = authHeader.substring(7); //提取token了,去掉 Bearer
 
             try{
-                //3、解析Token，获取用户名
+                // 3. 解析Token，提取用户信息
+                Claims claims = jwtUtil.getClaimsFromToken(token);
+                String jti = claims.get("jti", String.class);
+
+                // 3. 检查是否在黑名单中（登出后的Token）
+                if (authTokenService.isBlacklisted(jti)) {
+                    log.warn("Token已被加入黑名单");
+                    // 不设置认证信息，后续会被Spring Security拒绝
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 String username = jwtUtil.parseUsername(token);
                 Long userId = jwtUtil.parseUserId(token);
                 String role = jwtUtil.getRoleFromToken(token);
                 String department = jwtUtil.getDepartmentFromToken(token);
-
                 // 解析员工ID（可能为空）
-                Claims claims = jwtUtil.getClaimsFromToken(token);
                 Long employeeId = claims.get("employeeId", Long.class);
 
                 //4、验证Token是否有效
-                //“Token 里有人且 Spring 还没认证过，才继续走 JWT 认证流程，避免重复干活。
+                //"Token 里有人且 Spring 还没认证过，才继续走 JWT 认证流程，避免重复干活。
                 if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
                     //5、创建认证对象（包含完整用户信息）
                     UserAuthentication authentication = new UserAuthentication(

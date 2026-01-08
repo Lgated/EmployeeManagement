@@ -23,6 +23,29 @@ export const register = (data: RegisterRequest): Promise<AuthResponse> => {
   return request.post('/auth/register', data)
 }
 
+/**
+ * 刷新Token
+ * 注意：RT会自动从Cookie中发送，无需手动传递
+ * 通常由axios拦截器自动调用，无需手动调用
+ * @returns 认证响应（包含新的Token）
+ */
+export const refresh = (): Promise<AuthResponse> => {
+  return request.post('/auth/refresh')
+}
+
+/**
+ * 用户登出
+ * 调用后端登出接口，后端会：
+ * 1. 将AT加入黑名单
+ * 2. 删除Redis中的RT
+ * 3. 使Cookie过期
+ * @returns 登出响应
+ */
+export const logout = (): Promise<void> => {
+  return request.post('/auth/logout')
+}
+
+
 
 
 

@@ -1,10 +1,11 @@
 /**
  * Axios请求封装
- * 统一处理请求拦截、响应拦截、错误处理、Token管理
+ * 统一处理请求拦截、响应拦截、错误处理、Token管理、无感刷新
  */
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { message } from 'antd'
 import { ApiResult } from '../types'
+import { useAuthStore } from '../stores/authStore'
 
 // 创建axios实例
 const request: AxiosInstance = axios.create({
@@ -13,7 +14,70 @@ const request: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,  // 允许发送Cookie（重要：用于RT）
 })
+
+// 标记是否正在刷新Token，防止并发刷新
+let isRefreshing = false
+// 存储待重试的请求
+let failedQueue: Array<{
+  resolve: (value?: any) => void
+  reject: (reason?: any) => void
+}> = []
+
+/**
+ * 刷新Token
+ * 注意：RT会自动从Cookie中发送，无需手动传递
+ * 刷新成功后，同时更新authStore中的用户信息
+ */
+const refreshToken = async (): Promise<string | null> => {
+  try {
+    // 调用刷新接口，RT会自动从Cookie发送
+    const response = await axios.post('/api/auth/refresh', {}, {
+      withCredentials: true,  // 确保发送Cookie
+    })
+    
+    const res = response.data as ApiResult<any>
+    if (res.code === 200 && res.data?.token) {
+      const authData = res.data
+      
+      // 更新localStorage中的AT
+      localStorage.setItem('token', authData.token)
+      
+      // ✅ 关键：如果后端返回了用户信息，更新authStore
+      // 这样可以确保刷新Token后，用户信息（role、department等）保持最新
+      if (authData.username) {
+        useAuthStore.getState().setAuth(
+          authData.token,
+          authData.username,
+          authData.role,
+          authData.department,
+          authData.employeeId
+        )
+      }
+      
+      return authData.token
+    }
+    return null
+  } catch (error) {
+    console.error('刷新Token失败:', error)
+    return null
+  }
+}
+
+/**
+ * 处理队列中的请求
+ */
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error)
+    } else {
+      promise.resolve(token)
+    }
+  })
+  failedQueue = []
+}
 
 /**
  * 请求拦截器
@@ -40,7 +104,7 @@ request.interceptors.request.use(
 
 /**
  * 响应拦截器
- * 统一处理响应数据和错误
+ * 统一处理响应数据和错误，实现无感刷新
  */
 request.interceptors.response.use(
   (response) => {
@@ -55,19 +119,81 @@ request.interceptors.response.use(
     // 返回数据部分
     return res.data
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+    
     // HTTP错误处理
     if (error.response) {
       const status = error.response.status
       
-      switch (status) {
-        case 401:
-          // 未授权，清除Token并跳转到登录页
+      // 401错误：Token过期，尝试刷新
+      if (status === 401 && originalRequest && !originalRequest._retry) {
+        // 如果是刷新接口本身返回401，说明RT也过期了，直接跳转登录
+        if (originalRequest.url?.includes('/auth/refresh')) {
+          // 清除前端状态
           localStorage.removeItem('token')
+          useAuthStore.getState().clearAuth()
           message.error('登录已过期，请重新登录')
           window.location.href = '/login'
-          break
+          return Promise.reject(error)
+        }
+        
+        // 如果正在刷新，将请求加入队列
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject })
+          })
+            .then((token) => {
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${token}`
+              }
+              return request(originalRequest)
+            })
+            .catch((err) => {
+              return Promise.reject(err)
+            })
+        }
+        
+        // 标记正在刷新
+        originalRequest._retry = true
+        isRefreshing = true
+        
+        try {
+          // 刷新Token（RT会自动从Cookie发送）
+          const newToken = await refreshToken()
+          
+          if (newToken) {
+            // 刷新成功，处理队列中的请求
+            processQueue(null, newToken)
+            
+            // 更新原请求的Token并重试
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${newToken}`
+            }
+            
+            isRefreshing = false
+            return request(originalRequest)
+          } else {
+            // 刷新失败，跳转登录
+            throw new Error('刷新Token失败')
+          }
+        } catch (refreshError) {
+          // 刷新失败，处理队列并跳转登录
+          processQueue(refreshError, null)
+          isRefreshing = false
+          // 清除前端状态
+          localStorage.removeItem('token')
+          useAuthStore.getState().clearAuth()
+          message.error('登录已过期，请重新登录')
+          window.location.href = '/login'
+          return Promise.reject(refreshError)
+        }
+      }
+      
+      // 其他HTTP错误
+      switch (status) {
         case 403:
+          message.error('没有权限访问')
           break
         case 404:
           message.error('请求的资源不存在')
@@ -91,6 +217,7 @@ request.interceptors.response.use(
 )
 
 export default request
+
 
 
 

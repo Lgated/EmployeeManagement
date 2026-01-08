@@ -46,4 +46,11 @@ jwt:
 file:
   upload-path: D:/uploads/employee
 
+# 上线需要改为 true
+app:
+  https:
+    enabled: false
+
+
+
 

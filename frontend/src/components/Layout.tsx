@@ -16,6 +16,8 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons'
 import { useAuthStore } from '../stores/authStore'
+import { logout } from '../api/auth'
+import { message } from 'antd'
 
 type RoleCode = 'SUPER_ADMIN' | 'MANAGER' | 'EMPLOYEE'
 
@@ -77,9 +79,24 @@ const Layout = () => {
   }
 
   // 处理退出登录
-  const handleLogout = () => {
-    clearAuth()
-    navigate('/login')
+  const handleLogout = async () => {
+    try {
+      // 1. 调用后端登出接口，清除RT和黑名单AT
+      await logout()
+      
+      // 2. 清除前端状态（localStorage中的AT和用户信息）
+      clearAuth()
+      
+      // 3. 提示并跳转到登录页
+      message.success('已退出登录')
+      navigate('/login')
+    } catch (error: any) {
+      // 即使后端失败，也清除前端状态
+      console.error('登出失败:', error)
+      clearAuth()
+      message.warning('退出登录时发生错误，已清除本地数据')
+      navigate('/login')
+    }
   }
 
   // 用户下拉菜单

@@ -13,44 +13,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "JWT与Spring Security实战：从入门到踩坑.md",
+                "file": "docs/无感刷新和HTTP传输详解.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "JWT与Spring Security实战：从入门到踩坑"
-            }
-          },
-          {
-            "id": "05b1bdbf897cadb6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "a.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "a"
-            }
-          },
-          {
-            "id": "0a1a110afdba09e6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "前端用户管理功能实现指南.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "前端用户管理功能实现指南"
+              "title": "无感刷新和HTTP传输详解"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -123,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "前端用户管理功能实现指南.md",
+                "file": "docs/无感刷新和HTTP传输详解.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -133,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 前端用户管理功能实现指南"
+              "title": "Backlinks for 无感刷新和HTTP传输详解"
             }
           },
           {
@@ -142,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "前端用户管理功能实现指南.md",
+                "file": "docs/无感刷新和HTTP传输详解.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 前端用户管理功能实现指南"
+              "title": "Outgoing links from 无感刷新和HTTP传输详解"
             }
           },
           {
@@ -185,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "前端用户管理功能实现指南.md",
+                "file": "docs/无感刷新和HTTP传输详解.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 前端用户管理功能实现指南"
+              "title": "Outline of 无感刷新和HTTP传输详解"
             }
           }
         ]
@@ -212,53 +183,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "0a1a110afdba09e6",
+  "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
-    "RBAC权限模型实战：从设计到落地.md",
-    "生成密码哈希.md",
-    "src/main/java/com/example/empmgmt/service/Impl/AuthTokenService.java",
-    "src/main/java/com/example/empmgmt/service/AuthTokenService.java",
-    "src/main/java/com/example/empmgmt/config/RedisConfig.java",
-    "guide.md",
-    "JPA关联注解实现指南：User与Employee连表查询.md",
-    "JWT与Spring Security实战：从入门到踩坑.md",
-    "企业级功能扩展方案.md",
-    "企业级删除策略与用户表设计指南.md",
-    "前端用户管理功能实现指南.md",
-    "pom.xml~",
+    "docs/后端评估和前端改造指南.md",
+    "docs/无感刷新和HTTP传输详解.md",
+    "docs/双Token机制详解.md",
+    "docs/前端改造完成总结.md",
     "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl.class",
-    "target/classes/com/example/empmgmt/service/UserService.class",
-    "target/classes/com/example/empmgmt/controller/UserController.class",
+    "target/classes/com/example/empmgmt/service/Impl/PermissionServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl/PermissionServiceImpl$1.class",
+    "target/classes/com/example/empmgmt/service/Impl/FileServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl.class",
+    "target/classes/com/example/empmgmt/security/UserAuthentication.class",
+    "target/classes/com/example/empmgmt/security",
     "target/classes/com/example/empmgmt/repository/UserRepository.class",
-    "target/classes/com/example/empmgmt/dto/response/UserResponse.class",
     "target/classes/com/example/empmgmt/repository/EmployeeRepository.class",
-    "RBAC权限系统关系图.md",
-    "RBAC权限系统设计方案.md",
-    "RBAC权限系统完善方案.md",
-    "前端RBAC权限展示实现方案.md",
-    "前端项目说明.md",
-    "权限验证403错误修复方案.md",
-    "用户管理功能完整实现方案.md",
-    "前端报错修复方案.md",
-    "a.md",
-    "frontend/node_modules/json2mq/README.md",
-    "frontend/node_modules/@rollup/rollup-win32-x64-msvc/README.md",
-    "frontend/node_modules/@babel/helper-validator-option/README.md",
-    "frontend/docs/快速启动.md",
-    "frontend/docs/前后端联调指南.md",
-    "a1.md",
-    "frontend/node_modules/@rc-component/async-validator/LICENSE.md",
-    "frontend/node_modules/es-object-atoms/CHANGELOG.md",
-    "frontend/node_modules/@rc-component/mutate-observer/README.md",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-out.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zoom-in.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/zhihu.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/yuque.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/youtube.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/yahoo.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/x.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/woman.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/windows.svg",
-    "frontend/node_modules/@ant-design/icons-svg/inline-namespaced-svg/outlined/wifi.svg"
+    "target/classes/com/example/empmgmt/EmpMgmtApplication.class",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-out.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-in.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zhihu.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/yuque.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/youtube.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/yahoo.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/x.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/woman.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/windows.svg",
+    "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/wifi.svg",
+    "frontend/node_modules/caniuse-lite/README.md",
+    "frontend/node_modules/react-router-dom/CHANGELOG.md",
+    "frontend/node_modules/nanoid/README.md",
+    "frontend/node_modules/postcss/README.md",
+    "frontend/node_modules/throttle-debounce/LICENSE.md",
+    "frontend/node_modules/function-bind/README.md",
+    "frontend/node_modules/function-bind/CHANGELOG.md",
+    "frontend/node_modules/scroll-into-view-if-needed/README.md",
+    "frontend/node_modules/stylis/README.md",
+    "frontend/node_modules/rc-drawer/README.md",
+    "frontend/node_modules/use-sync-external-store/README.md",
+    "frontend/node_modules/toggle-selection/README.md",
+    "frontend/node_modules/hasown/README.md",
+    "frontend/node_modules/hasown/CHANGELOG.md",
+    "frontend/node_modules/mime-types/README.md",
+    "frontend/node_modules/mime-types/HISTORY.md",
+    "frontend/node_modules/dayjs/README.md",
+    "frontend/node_modules/dayjs/CHANGELOG.md",
+    "frontend/node_modules/escalade/readme.md",
+    "frontend/node_modules/es-define-property/README.md",
+    "frontend/node_modules/es-define-property/CHANGELOG.md",
+    "frontend/node_modules/lru-cache/README.md"
   ]
 }

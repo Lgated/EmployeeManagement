@@ -4,21 +4,21 @@
   "description": "APJ员工管理系统前端",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.2.6",
+    "antd": "^5.12.0",
+    "axios": "^1.6.2",
+    "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
-    "axios": "^1.6.2",
-    "antd": "^5.12.0",
-    "@ant-design/icons": "^5.2.6",
-    "dayjs": "^1.11.10",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
-    "@types/react": "^18.2.43",
+    "@types/react": "^18.3.27",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.8",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
   },
   "scripts": {
     "dev": "vite",
@@ -26,25 +26,4 @@
     "preview": "vite preview"
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
