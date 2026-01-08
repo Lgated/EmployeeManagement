@@ -12,10 +12,14 @@ import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.dto.response.UserResponse;
 import com.example.empmgmt.dto.response.UserWithEmployeeDTO;
+import com.example.empmgmt.service.ExportService;
 import com.example.empmgmt.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,8 +27,10 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final ExportService exportService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ExportService exportService) {
+        this.exportService = exportService;
         this.userService = userService;
     }
 
@@ -239,6 +245,20 @@ public class UserController {
     public Result<UserResponse> createWithEmployee(@Valid @RequestBody UserCreateRequest request) {
         UserResponse user = userService.createWithEmployee(request);
         return Result.success("创建成功", user);
+    }
+
+    /**
+     * 导出用户信息为Excel
+     * 权限：仅SUPER_ADMIN
+     */
+    @GetMapping("/export")
+    @RequiresRole("SUPER_ADMIN")
+    public void exportUsers(
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String department,
+            HttpServletResponse response
+    ) throws IOException {
+        exportService.exportUsersToExcel(role, department, response);
     }
 
 }

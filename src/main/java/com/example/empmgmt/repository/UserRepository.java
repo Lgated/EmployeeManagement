@@ -62,5 +62,11 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
      */
     @Query("SELECT u FROM User u JOIN u.employee e WHERE e.department = :department AND e.deleted = false")
     List<User> findByEmployeeDepartment(@Param("department") String department);
+
+    // 根据角色和部门查找用户
+    List<User> findByRoleAndDepartment(String role, String department);
+
+    // 根据角色查找用户
+    List<User> findByRole(String role);
 }
 

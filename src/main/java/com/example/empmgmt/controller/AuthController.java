@@ -164,9 +164,9 @@ public class AuthController {
     // 设置 Refresh Token Cookie
     private void setRefreshCookie(HttpServletResponse resp, String rt, int maxAgeSeconds) {
         ResponseCookie cookie = ResponseCookie.from("rt", rt)
-                .httpOnly(httpEnabled)
-                .secure(true)           // 生产环境 HTTPS 必须 true
-                .sameSite("None")       // 若前后端跨域，需 None + Secure
+                .httpOnly(true)         // 防止XSS攻击，JS无法访问
+                .secure(httpEnabled)    // 根据环境配置（开发false，生产true）
+                .sameSite(httpEnabled ? "None" : "Lax")  // 开发环境Lax，生产环境None
                 .path("/")
                 .maxAge(maxAgeSeconds)
                 .build();
@@ -176,9 +176,9 @@ public class AuthController {
     // 注销时使 Refresh Token Cookie 过期
     private void expireRefreshCookie(HttpServletResponse resp) {
         ResponseCookie cookie = ResponseCookie.from("rt", "")
-                .httpOnly(httpEnabled)        // 仅后端可访问
-                .secure(true)
-                .sameSite("None")      // 若前后端跨域，需 None + Secure
+                .httpOnly(true)         // 仅后端可访问
+                .secure(httpEnabled)    // 根据环境配置
+                .sameSite(httpEnabled ? "None" : "Lax")
                 .path("/")
                 .maxAge(0)
                 .build();

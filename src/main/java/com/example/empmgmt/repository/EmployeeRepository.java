@@ -51,4 +51,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>
     @Query("SELECT e FROM Employee e WHERE e.deleted = false AND NOT EXISTS " +
             "(SELECT 1 FROM User u WHERE u.employee.id = e.id)")
     List<Employee> findEmployeesWithoutUserAccount();
+
+    //根据部门和职位查询未删除的员工
+    List<Employee> findByDepartmentAndPositionAndDeletedFalse(String department, String position);
 }

@@ -33,12 +33,5 @@ bin/
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
-# IDE / 编辑器
-.idea/
+### Obsidian ###
 .obsidian/
-*.iml
-
-# 不想展示的文档
-docs/*.md          # 如果都放在 docs 目录
-笔记/
-*_未完成.md        # 通配

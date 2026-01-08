@@ -1,4 +1,5 @@
 import request from '../utils/request'
+import axios from 'axios'
 import type {
   User,
   UserWithEmployee,
@@ -112,4 +113,57 @@ export const resetPassword = (id: number, data: ResetPasswordRequest) => {
  */
 export const handleEmployeeResignation = (employeeId: number) => {
   return request.put<void>(`/users/handle-resignation/${employeeId}`)
+}
+
+/**
+ * 导出用户信息为Excel
+ * @param role 角色筛选（可选）
+ * @param department 部门筛选（可选）
+ */
+export const exportUsers = async (role?: string, department?: string): Promise<void> => {
+  const params = new URLSearchParams()
+  if (role) params.append('role', role)
+  if (department) params.append('department', department)
+  
+  // 直接使用axios，绕过request拦截器（因为拦截器会处理JSON响应，但导出需要blob）
+  const token = localStorage.getItem('token')
+  
+  const response = await axios.get(`/api/users/export?${params.toString()}`, {
+    responseType: 'blob',
+    withCredentials: true,
+    headers: {
+      Authorization: token ? `Bearer ${token}` : ''
+    }
+  })
+  
+  // 确保响应数据是Blob类型
+  const blob = response.data instanceof Blob 
+    ? response.data 
+    : new Blob([response.data], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      })
+  
+  // 创建下载链接
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  
+  // 从响应头获取文件名
+  const contentDisposition = response.headers['content-disposition']
+  let fileName = '用户信息.xlsx'
+  if (contentDisposition) {
+    // 处理UTF-8编码的文件名
+    const fileNameMatch = contentDisposition.match(/filename\*=UTF-8''(.+)|filename="?([^"]+)"?/i)
+    if (fileNameMatch) {
+      fileName = fileNameMatch[1] 
+        ? decodeURIComponent(fileNameMatch[1])
+        : fileNameMatch[2] || fileName
+    }
+  }
+  
+  link.setAttribute('download', fileName)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
 }

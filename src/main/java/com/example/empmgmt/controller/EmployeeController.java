@@ -12,9 +12,13 @@ import com.example.empmgmt.dto.response.EmployeeResponse;
 import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.service.EmployeeService;
+import com.example.empmgmt.service.ExportService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -22,9 +26,11 @@ import java.util.List;
 @RequestMapping("/api/employ")
 public class EmployeeController {
 
+    private final ExportService exportService;
     private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeService employeeService){
+    public EmployeeController(EmployeeService employeeService, ExportService exportService) {
+        this.exportService = exportService;
         this.employeeService = employeeService;
     }
 
@@ -138,8 +144,18 @@ public class EmployeeController {
         return Result.success(empYears);
     }
 
-
+    /**
+     * 导出员工信息为Excel
+     * 权限：SUPER_ADMIN、MANAGER
+     */
     //todo: 导出员工数据
-
-
+    @GetMapping("/export")
+    @RequiresRole({"SUPER_ADMIN", "MANAGER"})
+    public void exportEmployees(
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String position,
+            HttpServletResponse response
+    ) throws IOException {
+        exportService.exportEmployeesToExcel(department, position, response);
+    }
 }

@@ -2,7 +2,7 @@
  * 员工列表页面
  * 显示员工列表，支持搜索、新增、编辑、删除操作
  */
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Table,
@@ -13,14 +13,12 @@ import {
   message,
   Card,
   Select,
-  Alert,
 } from 'antd'
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
-  LockOutlined,
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import {
@@ -29,10 +27,13 @@ import {
 } from '../api/employee'
 import type { Employee } from '../types'
 import dayjs from 'dayjs'
-import { useAuthStore } from '../stores/authStore'
+import { DownloadOutlined } from '@ant-design/icons'
+import { exportEmployees } from '../api/employee'
+
 
 const { Search } = Input
 const { Option } = Select
+
 
 const EmployeeList = () => {
   const navigate = useNavigate()
@@ -43,62 +44,20 @@ const EmployeeList = () => {
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [total, setTotal] = useState(0)
-  const [permissionError, setPermissionError] = useState(false)  // ✅ 添加权限错误状态
-  const errorShownRef = useRef(false)  // ✅ 防止重复显示错误消息
-  const { role } = useAuthStore()
-  const canManageEmployee = role === 'SUPER_ADMIN' || role === 'MANAGER'
 
 
   /**
    * 加载员工列表
    */
   const loadEmployees = async () => {
-    // ✅ 如果已经是权限错误，不再重复请求
-    if (permissionError) {
-      return
-    }
-    
     try {
       setLoading(true)
-      setPermissionError(false) //重置错误状态
-      errorShownRef.current = false  // ✅ 重置错误显示标志
       const res = await getEmployeeList(searchName, searchDepartment, page, pageSize)
       // res: PageResult<Employee>
       setEmployees(res.records)
       setTotal(res.total)
     } catch (error: any) {
-      // ✅ 检查是否是权限错误（多种方式检查，确保能捕获所有情况）
-      const errorMessage = String(error?.message || error?.toString() || '')
-      const errorStatus = error?.response?.status || error?.status
-      const errorString = JSON.stringify(error) || ''
-      
-      // 检查是否是 403 权限错误（更全面的检查）
-      const isPermissionError = 
-        errorStatus === 403 ||
-        errorMessage.toLowerCase().includes('403') ||
-        errorMessage.toLowerCase().includes('forbidden') ||
-        errorMessage.includes('权限') ||
-        errorMessage.includes('没有权限') ||
-        errorMessage.includes('status code 403') ||
-        errorString.includes('403') ||
-        errorString.includes('Forbidden')
-      
-      if (isPermissionError) {
-        setPermissionError(true)
-        // ✅ 重要：不显示任何错误消息，只显示友好的提示卡片
-        setLoading(false)
-        return  // 提前返回，避免执行后续代码和显示错误消息
-      } else {
-        // 只有非权限错误才显示错误消息，并且防止重复显示
-        if (!errorShownRef.current) {
-          errorShownRef.current = true
-          message.error('加载员工列表失败: ' + (errorMessage || '未知错误'))
-          // 3秒后重置标志，允许再次显示错误（如果用户重试）
-          setTimeout(() => {
-            errorShownRef.current = false
-          }, 3000)
-        }
-      }
+      message.error('加载员工列表失败: ' + (error.message || '未知错误'))
     } finally {
       setLoading(false)
     }
@@ -129,6 +88,20 @@ const EmployeeList = () => {
     }
   }
 
+  // 在组件中添加导出函数
+  const handleExport = async () => {
+    try {
+      // 注意：position参数应该是职位，不是姓名
+      // 如果当前搜索的是姓名，position传undefined
+      const department = searchDepartment || undefined
+      const position = undefined  // 职位筛选暂时不支持，因为当前搜索框是姓名
+      await exportEmployees(department, position)
+      message.success('导出成功')
+    } catch (err: any) {
+      console.error('导出失败:', err)
+      message.error('导出失败: ' + (err.message || '未知错误'))
+    }
+  }
 
   /**
    * 获取所有部门列表（用于下拉选择）
@@ -143,7 +116,6 @@ const EmployeeList = () => {
       key: 'id',
       width: 80,
     },
-    // 在 name 列之前添加
     {
       title: '头像',
       dataIndex: 'avatar',
@@ -239,49 +211,32 @@ const EmployeeList = () => {
           >
             编辑
           </Button>
-          {canManageEmployee && (
-            <Popconfirm
-              title="确定要删除这名员工吗？"
-              onConfirm={() => handleDelete(record.id)}
-              okText="确定"
-              cancelText="取消"
-            >
-              <Button type="link" danger icon={<DeleteOutlined />}>
-                删除
-              </Button>
-            </Popconfirm>
-          )}
+          <Popconfirm
+            title="确定要删除这名员工吗？"
+            onConfirm={() => handleDelete(record.id)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <Button type="link" danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
   ]
-  if (permissionError) {
-    return (
-      <Card>
-        <Alert
-          message="权限不足"
-          description="您当前没有权限访问员工管理功能，请联系管理员获取相应权限。"
-          type="warning"
-          icon={<LockOutlined />}
-          showIcon
-          style={{ marginBottom: 16 }}
-        />
-      </Card>
-    )
-  }
+
   return (
     <Card
       title="员工管理"
       extra={
-        canManageEmployee && (
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => navigate('/employees/new')}
-          >
-            新增员工
-          </Button>
-        )
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => navigate('/employees/new')}
+        >
+          新增员工
+        </Button>
       }
     >
       {/* 搜索栏 */}
@@ -323,6 +278,13 @@ const EmployeeList = () => {
         }}>
           重置
         </Button>
+        <Button
+          type="primary"
+          icon={<DownloadOutlined />}
+          onClick={handleExport}
+        >
+          导出Excel
+        </Button>
       </Space>
 
       {/* 员工表格 */}
@@ -349,7 +311,6 @@ const EmployeeList = () => {
 }
 
 export default EmployeeList
-
 
 
 

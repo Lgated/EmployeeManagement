@@ -3,28 +3,26 @@
  * 处理员工的增删改查和统计请求
  */
 import request from '../utils/request'
-import { Employee, EmployeeCreateRequest, EmployeeUpdateRequest, DeptStats, PageResult } from '../types'
+import { Employee, EmployeeCreateRequest, EmployeeUpdateRequest, DeptStats , PageResult} from '../types'
+import axios from 'axios'
+
 
 /**
- * 获取所有员工列表（支持分页）
+ * 获取所有员工列表
  * @param name 可选：按姓名搜索
  * @param department 可选：按部门搜索
- * @param page 页码，从1开始
- * @param size 每页大小
- * @returns 分页员工列表
+ * @returns 员工列表
  */
 export const getEmployeeList = (
-  name?: string, 
-  department?: string, 
-  page?: number, 
-  size?: number
+  name?: string,
+  department?: string,
+  page: number = 1,
+  size: number = 10
 ): Promise<PageResult<Employee>> => {
-  const params: Record<string, string | number> = {}
+  const params: Record<string, any> = { page, size }
   if (name) params.name = name
   if (department) params.department = department
-  if (page) params.page = page
-  if (size) params.size = size
-  
+
   return request.get('/employ', { params })
 }
 
@@ -91,15 +89,58 @@ export const getDeptAvgSalaryStats = (): Promise<DeptStats[]> => {
 }
 
 
-
-
-
-
-
-
-
-
-
+/**
+ * 导出员工信息为Excel
+ * @param department 部门筛选（可选）
+ * @param position 职位筛选（可选）
+ */
+export const exportEmployees = async (department?: string, position?: string): Promise<void> => {
+  const params = new URLSearchParams()
+  if (department) params.append('department', department)
+  if (position) params.append('position', position)
+  
+  // 直接使用axios，绕过request拦截器（因为拦截器会处理JSON响应，但导出需要blob）
+  const token = localStorage.getItem('token')
+  
+  const response = await axios.get(`/api/employ/export?${params.toString()}`, {
+    responseType: 'blob',
+    withCredentials: true,
+    headers: {
+      Authorization: token ? `Bearer ${token}` : ''
+    }
+  })
+  
+  // 确保响应数据是Blob类型
+  const blob = response.data instanceof Blob 
+    ? response.data 
+    : new Blob([response.data], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      })
+  
+  // 创建下载链接
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  
+  // 从响应头获取文件名
+  const contentDisposition = response.headers['content-disposition']
+  let fileName = '员工信息.xlsx'
+  if (contentDisposition) {
+    // 处理UTF-8编码的文件名
+    const fileNameMatch = contentDisposition.match(/filename\*=UTF-8''(.+)|filename="?([^"]+)"?/i)
+    if (fileNameMatch) {
+      fileName = fileNameMatch[1] 
+        ? decodeURIComponent(fileNameMatch[1])
+        : fileNameMatch[2] || fileName
+    }
+  }
+  
+  link.setAttribute('download', fileName)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
+}
 
 
 

@@ -17,16 +17,15 @@ spring:
       max-file-size: 10MB  # 单个文件最大10MB
       max-request-size: 50MB  # 总请求最大50MB
       enabled: true
-  spring:
-    redis:
-      host: 127.0.0.1
-      port: 6379
-      # password
-      lettuce:
-        pool:
-          max-active: 16 # 最大连接数
-          max-idle: 8 # 最大空闲连接数
-          min-idle: 0 # 最小空闲连接数
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    # password
+    lettuce:
+      pool:
+        max-active: 16 # 最大连接数
+        max-idle: 8 # 最大空闲连接数
+        min-idle: 0 # 最小空闲连接数
       timeout: 2000 # 连接超时时间 ms
 
 server:
@@ -37,19 +36,24 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
-# JWT 配置
+# JWT双Token配置
 jwt:
   secret: replace-with-256-bit-secret-key-xxxx  # 生产环境应使用更安全的密钥
-  expiration: 3600000  # Token 过期时间(毫秒),默认1小时
+  expiration: 3600000  # Token 过期时间(毫秒),默认1小时（兼容旧配置，可选）
+  access-ttl-ms: 1800000  # Access Token有效期30分钟
+  refresh-ttl-ms: 2592000000  # Refresh Token有效期30天
 
 # 文件存储路径配置
 file:
   upload-path: D:/uploads/employee
 
+# 应用配置
 # 上线需要改为 true
 app:
   https:
-    enabled: false
+    enabled: false  # 开发环境false，生产环境true（影响Cookie的Secure设置）
+
+
 
 
 
