@@ -57,7 +57,7 @@ public class ExportServiceImpl implements ExportService {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Disposition",
-                "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20"));
+                "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" + URLEncoder.encode(fileName, "UTF-8"));
         // 4. 使用EasyExcel写入
         EasyExcel.write(response.getOutputStream(), EmployeeExportVO.class)
                 .sheet("员工信息")
@@ -87,7 +87,7 @@ public class ExportServiceImpl implements ExportService {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Disposition",
-                "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20"));
+                "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" + URLEncoder.encode(fileName, "UTF-8"));
         // 4. 使用EasyExcel写入
         EasyExcel.write(response.getOutputStream(), UserExportVO.class)
                 .sheet("用户信息")

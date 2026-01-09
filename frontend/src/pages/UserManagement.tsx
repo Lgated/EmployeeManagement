@@ -383,19 +383,21 @@ const UserManagement: React.FC = () => {
                     </Button>
                     {isSuperAdmin && (
                         <>
-                            <Button
-                                type="primary"
-                                icon={<DownloadOutlined />}
-                                onClick={handleExport}
-                            >
-                                导出Excel
-                            </Button>
+
                             <Button
                                 type="primary"
                                 icon={<PlusOutlined />}
                                 onClick={() => setCreateModalVisible(true)}
                             >
                                 新建用户
+                            </Button>
+
+                            <Button
+                                type="primary"
+                                icon={<DownloadOutlined />}
+                                onClick={handleExport}
+                            >
+                                导出Excel
                             </Button>
                         </>
                     )}
