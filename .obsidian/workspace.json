@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/员工和用户信息导出功能实现文档.md",
+                "file": "docs/Redis 进阶实践文档：分页缓存 + 登录令牌桶限流.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "员工和用户信息导出功能实现文档"
+              "title": "Redis 进阶实践文档：分页缓存 + 登录令牌桶限流"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/员工和用户信息导出功能实现文档.md",
+                "file": "docs/Redis 进阶实践文档：分页缓存 + 登录令牌桶限流.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 员工和用户信息导出功能实现文档"
+              "title": "Backlinks for Redis 进阶实践文档：分页缓存 + 登录令牌桶限流"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/员工和用户信息导出功能实现文档.md",
+                "file": "docs/Redis 进阶实践文档：分页缓存 + 登录令牌桶限流.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 员工和用户信息导出功能实现文档"
+              "title": "Outgoing links from Redis 进阶实践文档：分页缓存 + 登录令牌桶限流"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/员工和用户信息导出功能实现文档.md",
+                "file": "docs/Redis 进阶实践文档：分页缓存 + 登录令牌桶限流.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 员工和用户信息导出功能实现文档"
+              "title": "Outline of Redis 进阶实践文档：分页缓存 + 登录令牌桶限流"
             }
           }
         ]
@@ -185,29 +185,32 @@
   },
   "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
+    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl$1.class",
+    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl/EmployeeServiceImpl$1.class",
+    "target/classes/com/example/empmgmt/config/RedisConfig.class",
+    "target/classes/com/example/empmgmt/service/Impl/AuthTokenService.class",
+    "target/classes/com/example/empmgmt/common/util/CacheKeyUtil.class",
     "target/classes/com/example/empmgmt/service/Impl/ExportServiceImpl.class",
-    "target/classes/com/example/empmgmt/dto/vo/EmployeeExportVO.class",
-    "target/classes/com/example/empmgmt/controller/AuthController.class",
-    "frontend/node_modules/@ant-design/icons/package.json",
-    "frontend/node_modules/node-releases/package.json",
-    "frontend/node_modules/@babel/traverse/lib/hub.js",
-    "frontend/node_modules/@babel/traverse/lib/path/comments.js",
-    "frontend/node_modules/@babel/traverse/lib/path/family.js",
-    "frontend/node_modules/@babel/traverse/lib/path/introspection.js",
-    "frontend/node_modules/@babel/template/lib/literal.js",
-    "frontend/node_modules/@babel/template/lib/populate.js",
-    "docs/POI与EasyExcel对比.md",
-    "docs/JWT与Spring Security实战：从入门到踩坑.md",
+    "target/classes/com/example/empmgmt/service/UserService.class",
+    "frontend/node_modules/@ant-design/icons/lib/icons/FileSearchOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/SearchOutlined.d.ts",
+    "docs/无感刷新机制和HTTP传输详解.md",
+    "docs/Redis 进阶实践文档：分页缓存 + 登录令牌桶限流.md",
+    "docs/用户管理功能完整实现方案.md",
     "docs/员工和用户信息导出功能实现文档.md",
+    "docs/JPA关联注解实现指南：User与Employee连表查询.md",
+    "docs/JWT与Spring Security实战：从入门到踩坑.md",
+    "docs/前端报错修复方案.md",
+    "docs/POI与EasyExcel对比.md",
     "docs/后端评估和前端改造指南.md",
     "docs/a1.md",
     "docs/a.md",
-    "docs/用户管理功能完整实现方案.md",
     "docs/生成密码哈希.md",
     "docs/权限验证403错误修复方案.md",
     "docs/前端项目说明.md",
     "docs/前端用户管理功能实现指南.md",
-    "docs/前端报错修复方案.md",
     "docs/前端RBAC权限展示实现方案.md",
     "docs/企业级功能扩展方案.md",
     "docs/企业级删除策略与用户表设计指南.md",
@@ -215,12 +218,9 @@
     "docs/RBAC权限系统完善方案.md",
     "docs/RBAC权限系统关系图.md",
     "docs/RBAC权限模型实战：从设计到落地.md",
-    "docs/JPA关联注解实现指南：User与Employee连表查询.md",
     "docs/guide.md",
     "frontend/node_modules/@ant-design/icons/docs/demo/use-iconfontcn.md",
     "frontend/node_modules/@ant-design/icons/docs/demo/simple.md",
-    "frontend/node_modules/@ant-design/icons/docs/demo/tooltip.md",
-    "frontend/node_modules/@ant-design/icons/docs/demo/two-tone.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zhihu.svg",

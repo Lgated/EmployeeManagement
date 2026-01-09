@@ -87,4 +87,6 @@ public interface UserService {
      * @return
      */
     User toEntity(UserResponse byId);
+
+
 }

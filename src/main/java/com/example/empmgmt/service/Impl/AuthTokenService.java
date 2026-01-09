@@ -11,10 +11,10 @@ import java.util.Optional;
  */
 @Service
 public class AuthTokenService {
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> stringRedisTemplate;
 
-    public AuthTokenService(RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    public AuthTokenService(RedisTemplate<String, String> stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     // 刷新令牌的 Redis
@@ -30,26 +30,26 @@ public class AuthTokenService {
 
     // 保存刷新令牌
     public void saveRefreshToken(Long userId, String device, String rt, Duration ttl) {
-        redisTemplate.opsForValue().set(rtKey(userId, device), rt, ttl);
+        stringRedisTemplate.opsForValue().set(rtKey(userId, device), rt, ttl);
     }
 
     // 获取刷新令牌
     public Optional<String> getRefreshToken(Long userId, String device) {
-        return Optional.ofNullable(redisTemplate.opsForValue().get(rtKey(userId, device)));
+        return Optional.ofNullable(stringRedisTemplate.opsForValue().get(rtKey(userId, device)));
     }
 
     // 删除刷新令牌
     public void deleteRefreshToken(Long userId, String device) {
-        redisTemplate.delete(rtKey(userId, device));
+        stringRedisTemplate.delete(rtKey(userId, device));
     }
 
     // 将访问令牌加入黑名单
     public void blacklistAccessToken(String jti, Duration ttl) {
-        redisTemplate.opsForValue().set(blKey(jti), "1", ttl);
+        stringRedisTemplate.opsForValue().set(blKey(jti), "1", ttl);
     }
 
     // 检查访问令牌是否在黑名单中
     public boolean isBlacklisted(String jti) {
-        return redisTemplate.hasKey(blKey(jti));
+        return Boolean.TRUE.equals(stringRedisTemplate.hasKey(blKey(jti)));
     }
 }

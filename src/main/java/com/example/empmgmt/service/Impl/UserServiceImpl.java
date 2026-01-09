@@ -1,6 +1,7 @@
 package com.example.empmgmt.service.Impl;
 
 import com.example.empmgmt.common.Exception.BusinessException;
+import com.example.empmgmt.common.util.CacheKeyUtil;
 import com.example.empmgmt.common.util.SecurityUtil;
 import com.example.empmgmt.domain.Employee;
 import com.example.empmgmt.domain.User;
@@ -17,6 +18,9 @@ import com.example.empmgmt.repository.UserRepository;
 import com.example.empmgmt.service.EmployeeService;
 import com.example.empmgmt.service.UserService;
 import com.example.empmgmt.common.util.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,12 +28,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 
@@ -42,6 +51,8 @@ public class UserServiceImpl implements UserService {
     private final EmployeeRepository employeeRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final StringRedisTemplate stringRedisTemplate;
+    private final ObjectMapper objectMapper;
 
     // 默认密码
     private static final String DEFAULT_PASSWORD = "123456";
@@ -49,7 +60,12 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository,
                            JwtUtil jwtUtil,
                            PasswordEncoder passwordEncoder,
-                           EmployeeRepository employeeRepository){
+                           EmployeeRepository employeeRepository,
+                           StringRedisTemplate stringRedisTemplate,
+                           ObjectMapper objectMapper
+                           ) {
+        this.stringRedisTemplate = stringRedisTemplate;
+        this.objectMapper = objectMapper;
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
@@ -132,49 +148,55 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    //TODO:不懂
+    //TODO:不懂 jpa 动态查询
     @Override
     @Transactional(readOnly = true)
     public PageResponse<UserResponse> pageQuery(String username, String role, Boolean enabled, int page, int size) {
 
-        //创建分页对象（按创建时间倒叙）
-        Pageable pageable = PageRequest.of(page - 1, size,
-                Sort.by(Sort.Direction.DESC, "createdAt"));
-        // 动态条件查询
-        Specification<User> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
+        //1、生成缓存 key
+        String cacheKey = CacheKeyUtil.buildUserListKey(username, role, page, size);
 
-            // 用户名模糊查询
-            if (username != null && !username.trim().isEmpty()) {
-                predicates.add(cb.like(root.get("username"), "%" + username + "%"));
+        // 2. 从 Redis 读取缓存（JSON 字符串）
+        String json = stringRedisTemplate.opsForValue().get(cacheKey);
+        if (json != null && !json.isBlank()) {
+            try {
+                // 3. 反序列化为 PageResponse<UserResponse>
+                PageResponse<UserResponse> cached = objectMapper.readValue(
+                        json,
+                        new TypeReference<PageResponse<UserResponse>>() {}
+                );
+                //缓存存在，直接返回
+                return cached;
+            } catch (Exception e) {
+                // 解析失败就当没缓存，用日志记录一下，不影响主流程
+                log.warn("解析用户分页缓存失败，key={}, json={}", cacheKey, json, e);
             }
+        }
+        //4、缓存不存在，执行数据库查询
+        PageResponse<UserResponse> queryDb = doQueryDb(username, role, enabled, page, size);
 
-            // 角色精确查询
-            if (role != null && !role.trim().isEmpty()) {
-                predicates.add(cb.equal(root.get("role"), role));
-            }
+        // 5. 写入缓存（加一点随机 TTL，避免雪崩）
+        try {
+            String toCache = objectMapper.writeValueAsString(queryDb);
 
-            // 启用状态查询
-            if (enabled != null) {
-                predicates.add(cb.equal(root.get("enabled"), enabled));
-            }
+            long baseTtlSeconds = 5 * 60; // 5分钟
+            long randomExtra = ThreadLocalRandom.current().nextLong(0, 60); // 0~60秒
+            stringRedisTemplate.opsForValue().set(
+                    cacheKey,
+                    toCache,
+                    Duration.ofSeconds(baseTtlSeconds + randomExtra)
+            );
 
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-        Page<User> userPage = userRepository.findAll(spec, pageable);
-        //转换为响应DTO
-        List<UserResponse> records = userPage.getContent().stream()
-                .map(UserResponse::fromEntity)
-                .collect(Collectors.toList());
+            // 5. 把 key 记到“索引集合”中，方便写后删除
+            stringRedisTemplate.opsForSet().add(CacheKeyUtil.userListKeySet(), cacheKey);
+        } catch (JsonProcessingException e) {
+            log.warn("写入用户分页缓存失败，key={}", cacheKey, e);
+        }
+        return queryDb;
 
-        // 使用你的 PageResponse 格式
-        return new PageResponse<>(
-                records,
-                userPage.getTotalElements(),
-                page,  // 当前页（从1开始）
-                size   // 每页大小
-        );
     }
+
+
 
     @Override
     @Transactional(readOnly = true)
@@ -217,6 +239,8 @@ public class UserServiceImpl implements UserService {
         log.info("创建用户成功: {}, 角色: {}, 员工ID: {}",
                 savedUser.getUsername(), savedUser.getRole(), savedUser.getEmployeeId());
 
+        // 清除用户列表相关的缓存
+        clearUserListCache();
 
         return UserResponse.fromEntity(savedUser);
 
@@ -258,6 +282,8 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(user);
         log.info("更新用户成功: {}", updatedUser.getUsername());
 
+        // 清除缓存
+        clearUserListCache();
         return UserResponse.fromEntity(updatedUser);
     }
 
@@ -274,6 +300,8 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(user);
         log.info("删除用户成功: {}", user.getUsername());
+        // 清除缓存
+        clearUserListCache();
     }
 
     @Override
@@ -292,6 +320,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         log.info("更新用户状态: {}, 启用: {}", user.getUsername(), enabled);
+        // 清除缓存
+        clearUserListCache();
     }
 
     @Override
@@ -319,7 +349,8 @@ public class UserServiceImpl implements UserService {
 
         User updatedUser = userRepository.save(user);
         log.info("分配角色成功: {}, 新角色: {}", updatedUser.getUsername(), role);
-
+        // 清除缓存
+        clearUserListCache();
         return UserResponse.fromEntity(updatedUser);
     }
 
@@ -478,10 +509,64 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    // 执行数据库查询
+    private PageResponse<UserResponse> doQueryDb(String username, String role, Boolean enabled, int page, int size) {
+        //创建分页对象（按创建时间倒叙）
+        Pageable pageable = PageRequest.of(page - 1, size,
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+        // 动态条件查询
+        Specification<User> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 用户名模糊查询
+            if (username != null && !username.trim().isEmpty()) {
+                predicates.add(cb.like(root.get("username"), "%" + username + "%"));
+            }
+
+            // 角色精确查询
+            if (role != null && !role.trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("role"), role));
+            }
+
+            // 启用状态查询
+            if (enabled != null) {
+                predicates.add(cb.equal(root.get("enabled"), enabled));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        Page<User> userPage = userRepository.findAll(spec, pageable);
+        //转换为响应DTO
+        List<UserResponse> records = userPage.getContent().stream()
+                .map(UserResponse::fromEntity)
+                .collect(Collectors.toList());
+
+        // 使用你的 PageResponse 格式
+        return new PageResponse<>(
+                records,
+                userPage.getTotalElements(),
+                page,  // 当前页（从1开始）
+                size   // 每页大小
+        );
+    }
+
+    // 验证角色和部门的关系
     private void validateRoleAndDepartment(String role, String department) {
         if ("MANAGER".equals(role) && (department == null || department.trim().isEmpty())) {
             throw new BusinessException("部门经理必须指定部门");
         }
     }
 
+    // 清除用户列表相关的缓存
+    private void clearUserListCache() {
+        String keySet = CacheKeyUtil.userListKeySet();
+        // 1. 取出所有列表 key（现在存的就是 String）
+        Set<String> keys = stringRedisTemplate.opsForSet().members(keySet);
+        if (keys != null && !keys.isEmpty()) {
+            // 2. 删除这些 key
+            stringRedisTemplate.delete(keys);
+        }
+        // 3. 清空 key 集合本身
+        stringRedisTemplate.delete(keySet);
+    }
 }
