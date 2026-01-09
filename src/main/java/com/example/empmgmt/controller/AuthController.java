@@ -1,5 +1,6 @@
 package com.example.empmgmt.controller;
 
+import com.example.empmgmt.common.Exception.BusinessException;
 import com.example.empmgmt.common.Exception.PermissionDeniedException;
 import com.example.empmgmt.common.util.JwtUtil;
 import com.example.empmgmt.domain.User;
@@ -9,12 +10,14 @@ import com.example.empmgmt.dto.response.AuthResponse;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.dto.response.UserResponse;
 import com.example.empmgmt.service.Impl.AuthTokenService;
+import com.example.empmgmt.service.Impl.RateLimitService;
 import com.example.empmgmt.service.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -27,6 +30,7 @@ import java.time.Duration;
 
 @RestController
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
     @Value("${app.https.enabled}")
@@ -35,12 +39,17 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
     private final AuthTokenService authTokenService;
+    private final RateLimitService rateLimitService;
 
 
-    public AuthController(UserService userService, JwtUtil jwtUtil, AuthTokenService authTokenService) {
+    public AuthController(UserService userService,
+                          JwtUtil jwtUtil,
+                          AuthTokenService authTokenService,
+                          RateLimitService rateLimitService) {
         this.jwtUtil = jwtUtil;
         this.authTokenService = authTokenService;
         this.userService = userService;
+        this.rateLimitService = rateLimitService;
     }
 
     /**
@@ -60,6 +69,23 @@ public class AuthController {
     // 登录 ： 签发AT + RT ，RT 写cookie（可以改为返回Header）
     @PostMapping("/login")
     public Result<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse resp, HttpServletRequest req) {
+
+        // 1. 未登录前按 IP 限流
+        String ip = getClientIpAddress(req);
+
+        //TODO : 现在capacity 为 2，仅测试，实际可调大一些
+        // 例如：容量 30，每秒 0.5 个令牌 => 每分钟约补充 30 个
+        boolean allowed = rateLimitService.tryAcquire(
+                "rate:login:ip:",
+                ip,
+                2,
+                0.5
+        );
+        if (!allowed) {
+            throw new BusinessException("请求过于频繁，请稍后再试");
+        }
+
+        //限流通过，继续登录流程
         User user = userService.loginAndGetUser(request); // 假设返回 User，包含角色等
         String device = resolveDevice(req);
 
@@ -138,21 +164,33 @@ public class AuthController {
         String rt = extractRefreshToken(req);
 
         if (at != null) {
-            // 将当前 AT 加入黑名单
-            Claims atClaims = jwtUtil.parseToken(at);
-            String jti = atClaims.get("jti", String.class);
-            Long expMillis = atClaims.getExpiration().getTime() - System.currentTimeMillis();
-            // at剩余时间为黑名单存活时间，不需要手动清楚黑名单
-            if (expMillis > 0) {
-                authTokenService.blacklistAccessToken(jti, Duration.ofMillis(expMillis));
+            try {
+                // 将当前 AT 加入黑名单 - AT过期就不要加入黑名单了 不然jwtUtil.parseToken(at) 就会抛异常
+                // JWT 在解析一个过期 token 时会直接抛出 ExpiredJwtException，没有被你捕获，于是全局异常处理器报“系统异常
+                Claims atClaims = jwtUtil.parseToken(at);
+                String jti = atClaims.get("jti", String.class);
+                Long expMillis = atClaims.getExpiration().getTime() - System.currentTimeMillis();
+                // at剩余时间为黑名单存活时间，不需要手动清楚黑名单
+                if (expMillis > 0) {
+                    authTokenService.blacklistAccessToken(jti, Duration.ofMillis(expMillis));
+                }
+            }catch (io.jsonwebtoken.ExpiredJwtException e){
+                // AT 已过期：认为用户本身就已经“失效”，不再做黑名单处理，直接忽略
+                // token 已过期，无需加入黑名单
+                log.debug("Logout with expired access token, ignore blacklist\", e");
             }
         }
-
         if (rt != null) {
+            try{
             Claims rtClaims = jwtUtil.parseToken(rt);
             Long userId = rtClaims.get("userId", Long.class);
             String device = rtClaims.get("device", String.class);
             authTokenService.deleteRefreshToken(userId, device);
+            }catch (io.jsonwebtoken.ExpiredJwtException e){
+                // RT 已过期：说明刷新令牌已经失效，Redis 里的 RT 很可能也自然过期了
+                // token 已过期，Redis 中已自动删除，无需处理
+                log.debug("Logout with expired refresh token, ignore delete from redis\", e");
+            }
         }
 
         // 使 Cookie 过期
