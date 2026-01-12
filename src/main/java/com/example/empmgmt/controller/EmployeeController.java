@@ -5,14 +5,17 @@ import com.example.empmgmt.common.annotation.OperationLog;
 import com.example.empmgmt.common.annotation.RequiresPermission;
 import com.example.empmgmt.common.annotation.RequiresRole;
 import com.example.empmgmt.common.enums.OperationType;
+import com.example.empmgmt.common.util.SecurityUtil;
 import com.example.empmgmt.dto.request.EmployeeCreateRequest;
 import com.example.empmgmt.dto.request.EmployeeUpdateRequest;
 import com.example.empmgmt.dto.response.DeptStatsResponse;
 import com.example.empmgmt.dto.response.EmployeeResponse;
 import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.dto.response.Result;
+import com.example.empmgmt.mq.dto.EmployeeExportParams;
 import com.example.empmgmt.service.EmployeeService;
 import com.example.empmgmt.service.ExportService;
+import com.example.empmgmt.service.ExportTaskService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,8 +31,12 @@ public class EmployeeController {
 
     private final ExportService exportService;
     private final EmployeeService employeeService;
+    private final ExportTaskService exportTaskService;
 
-    public EmployeeController(EmployeeService employeeService, ExportService exportService) {
+    public EmployeeController(EmployeeService employeeService,
+                              ExportService exportService,
+                              ExportTaskService exportTaskService) {
+        this.exportTaskService = exportTaskService;
         this.exportService = exportService;
         this.employeeService = employeeService;
     }
@@ -157,5 +164,20 @@ public class EmployeeController {
             HttpServletResponse response
     ) throws IOException {
         exportService.exportEmployeesToExcel(department, position, response);
+    }
+
+    @PostMapping("/export/async")
+    @RequiresRole({"SUPER_ADMIN", "MANAGER"})
+    public Result<Long> createExportTask(
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String position
+    ) {
+        EmployeeExportParams params = new EmployeeExportParams();
+        params.setDepartment(department);
+        params.setPosition(position);
+
+        Long userId = SecurityUtil.getCurrentUserId();
+        Long taskId = exportTaskService.createEmployeeExportTask(params, userId);
+        return Result.success("导出任务已提交", taskId);
     }
 }

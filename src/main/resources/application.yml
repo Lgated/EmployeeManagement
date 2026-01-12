@@ -27,6 +27,16 @@ spring:
         max-idle: 8 # 最大空闲连接数
         min-idle: 0 # 最小空闲连接数
       timeout: 2000 # 连接超时时间 ms
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /     # 虚拟主机
+    # 开启 publisher confirm 和 return，支持可靠投递
+    # 开启「生产者确认机制」 -- correlated 类型说明:是 Spring AMQP 2.1+ 推荐的类型，支持「异步回调」：生产者发送消息后无需阻塞等待，通过 ConfirmCallback 回调函数接收确认结果；
+    publisher-confirm-type: correlated
+    publisher-returns: true # 开启「生产者回退机制」
 
 server:
   port: 8080
