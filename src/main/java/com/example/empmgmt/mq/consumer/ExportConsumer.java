@@ -39,6 +39,9 @@ public class ExportConsumer {
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
 
+    /**
+     *  处理导出任务消息
+     */
     @RabbitListener(queues = ExportMqConfig.EXPORT_QUEUE)
     @Transactional
     public void handleExportTask(ExportTaskMessage message){
@@ -54,11 +57,13 @@ public class ExportConsumer {
             log.info("导出任务状态不是PENDING，跳过。taskId={}, status={}", exportTask.getId(), exportTask.getStatus());
             return;
         }
+
         try{
             // 更新任务状态为 PROCESSING
             exportTask.setStatus("PROCESSING");
             exportTask.setUpdatedAt(LocalDateTime.now());
             exportTaskRepository.save(exportTask);
+
             if ("EMPLOYEE_EXPORT".equals(exportTask.getTaskType())) {
                 EmployeeExportParams params = objectMapper.readValue(
                         exportTask.getParams(),
@@ -110,6 +115,7 @@ public class ExportConsumer {
 
         File file = new File(dirFile, fileName);
 
+        // 使用 EasyExcel 写入文件
         EasyExcel.write(file, EmployeeExportVO.class)
                 .sheet("员工信息")
                 .doWrite(voList);

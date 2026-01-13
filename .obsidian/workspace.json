@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/MQ 异步化实践文档：导出通知日志异步化.md",
+                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "MQ 异步化实践文档：导出通知日志异步化"
+              "title": "导出方案对比：同步vs异步、EasyExcel使用详解"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/MQ 异步化实践文档：导出通知日志异步化.md",
+                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for MQ 异步化实践文档：导出通知日志异步化"
+              "title": "Backlinks for 导出方案对比：同步vs异步、EasyExcel使用详解"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/MQ 异步化实践文档：导出通知日志异步化.md",
+                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from MQ 异步化实践文档：导出通知日志异步化"
+              "title": "Outgoing links from 导出方案对比：同步vs异步、EasyExcel使用详解"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/MQ 异步化实践文档：导出通知日志异步化.md",
+                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of MQ 异步化实践文档：导出通知日志异步化"
+              "title": "Outline of 导出方案对比：同步vs异步、EasyExcel使用详解"
             }
           }
         ]
@@ -185,22 +185,24 @@
   },
   "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
-    "src/main/java/com/example/empmgmt/controller/ExportTaskController.java",
-    "src/main/java/com/example/empmgmt/mq/consumer/ExportConsumer.java",
-    "src/main/java/com/example/empmgmt/mq/dto/ExportTaskMessage.java",
-    "src/main/java/com/example/empmgmt/mq/dto/EmployeeExportParams.java",
-    "src/main/java/com/example/empmgmt/mq/EmployeeExportParams.java",
-    "src/main/java/com/example/empmgmt/mq/ExportTaskMessage.java",
-    "src/main/java/com/example/empmgmt/mq/consumer",
-    "src/main/java/com/example/empmgmt/mq/dto",
-    "src/main/java/com/example/empmgmt/mq",
-    "src/main/java/com/example/empmgmt/dto/mq/consumer",
-    "src/main/java/com/example/empmgmt/dto/mq/dto",
-    "docs/令牌桶限流实战：从原理到实现.md",
+    "docs/消息队列异步导出完整解析：从零开始理解MQ架构.md",
+    "docs/后端评估和前端改造指南.md",
+    "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
     "docs/MQ 异步化实践文档：导出通知日志异步化.md",
     "docs/Redis 进阶实践文档：分页缓存 + 登录令牌桶限流.md",
+    "docs/JWT与Spring Security实战：从入门到踩坑.md",
+    "frontend/node_modules/@ant-design/icons/lib/icons/BackwardOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/BackwardFilled.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/AuditOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/AudioFilled.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/ArrowsAltOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/ArrowUpOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/ArrowDownOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/AreaChartOutlined.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/AppstoreTwoTone.d.ts",
+    "frontend/node_modules/@ant-design/icons/lib/icons/AppstoreOutlined.d.ts",
+    "docs/令牌桶限流实战：从原理到实现.md",
     "docs/企业级删除策略与用户表设计指南.md",
-    "docs/后端评估和前端改造指南.md",
     "docs/企业级功能扩展方案.md",
     "docs/用户管理功能完整实现方案.md",
     "docs/员工和用户信息导出功能实现文档.md",
@@ -209,7 +211,6 @@
     "docs/a1.md",
     "docs/JPA关联注解实现指南：User与Employee连表查询.md",
     "docs/guide.md",
-    "docs/JWT与Spring Security实战：从入门到踩坑.md",
     "docs/前端报错修复方案.md",
     "docs/POI与EasyExcel对比.md",
     "docs/生成密码哈希.md",
@@ -220,7 +221,6 @@
     "docs/RBAC权限系统设计方案.md",
     "docs/RBAC权限系统完善方案.md",
     "docs/RBAC权限系统关系图.md",
-    "docs/RBAC权限模型实战：从设计到落地.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zhihu.svg",

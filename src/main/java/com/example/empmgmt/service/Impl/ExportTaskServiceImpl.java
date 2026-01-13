@@ -52,6 +52,7 @@ public class ExportTaskServiceImpl implements ExportTaskService {
             message.setParamsJson(save.getParams());
 
             // 发送到指定的交换机和路由键
+            //convertAndSend() : 异步发送消息，不阻塞
             rabbitTemplate.convertAndSend(ExportMqConfig.EXPORT_EXCHANGE,
                     ExportMqConfig.EXPORT_ROUTING_KEY,
                     message);
