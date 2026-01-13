@@ -36,12 +36,18 @@ public class ExportTaskController {
     // 文件名时间格式化器
     private static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
+    /**
+     * 获取导出任务详情
+     */
     @GetMapping("/{taskId}")
     public Result<ExportTask> getTask(@PathVariable Long taskId) {
         ExportTask task = exportTaskService.getTask(taskId);
         return Result.success(task);
     }
 
+    /**
+     * 下载导出文件
+     */
     @GetMapping("/{taskId}/download")
     public void download(@PathVariable Long taskId, HttpServletResponse response) throws IOException {
         ExportTask task = exportTaskService.getTask(taskId);

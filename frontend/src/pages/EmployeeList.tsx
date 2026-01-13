@@ -29,7 +29,11 @@ import type { Employee } from '../types'
 import dayjs from 'dayjs'
 import { DownloadOutlined } from '@ant-design/icons'
 import { exportEmployees } from '../api/employee'
-
+import { 
+  createEmployeeExportTask, 
+  getExportTask, 
+  downloadExportFile 
+} from '../api/employee'
 
 const { Search } = Input
 const { Option } = Select
@@ -89,19 +93,48 @@ const EmployeeList = () => {
   }
 
   // 在组件中添加导出函数
-  const handleExport = async () => {
-    try {
-      // 注意：position参数应该是职位，不是姓名
-      // 如果当前搜索的是姓名，position传undefined
-      const department = searchDepartment || undefined
-      const position = undefined  // 职位筛选暂时不支持，因为当前搜索框是姓名
-      await exportEmployees(department, position)
-      message.success('导出成功')
-    } catch (err: any) {
-      console.error('导出失败:', err)
-      message.error('导出失败: ' + (err.message || '未知错误'))
+const handleExport = async () => {
+  try {
+    const department = searchDepartment || undefined
+    const position = undefined  // 职位筛选暂时不支持
+    
+    // 1. 创建导出任务
+    message.loading('正在提交导出任务...', 0)
+    const taskId = await createEmployeeExportTask(department, position)
+    message.destroy()
+    message.success('导出任务已提交，正在处理中...')
+    
+    // 2. 轮询查询任务状态
+    const pollTask = async () => {
+      try {
+        const task = await getExportTask(taskId)
+        
+        if (task.status === 'SUCCESS') {
+          // 任务完成，下载文件
+          message.success('文件已生成，开始下载...')
+          await downloadExportFile(taskId)
+          message.success('下载成功')
+        } else if (task.status === 'FAILED') {
+          // 任务失败
+          message.error('导出失败: ' + (task.errorMsg || '未知错误'))
+        } else if (task.status === 'PROCESSING' || task.status === 'PENDING') {
+          // 任务处理中，继续轮询
+          setTimeout(pollTask, 2000)  // 2秒后再次查询
+        }
+      } catch (error: any) {
+        message.error('查询任务状态失败: ' + (error.message || '未知错误'))
+      }
     }
+    
+    // 开始轮询
+    pollTask()
+    
+  } catch (err: any) {
+    message.destroy()
+    console.error('导出失败:', err)
+    message.error('导出失败: ' + (err.message || '未知错误'))
   }
+}
 
   /**
    * 获取所有部门列表（用于下拉选择）

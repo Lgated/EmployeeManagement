@@ -1,5 +1,4 @@
 import request from '../utils/request'
-import axios from 'axios'
 import type {
   User,
   UserWithEmployee,
@@ -9,6 +8,7 @@ import type {
   ResetPasswordRequest,
   PageResponse
 } from '../types/user'
+import axios from 'axios'
 
 /**
  * 获取用户列表
@@ -125,10 +125,90 @@ export const exportUsers = async (role?: string, department?: string): Promise<v
   if (role) params.append('role', role)
   if (department) params.append('department', department)
   
-  // 直接使用axios，绕过request拦截器（因为拦截器会处理JSON响应，但导出需要blob）
+  const response = await axios.get(`/users/export?${params.toString()}`, {
+    responseType: 'blob',
+    withCredentials: true,
+  })
+  
+  const url = window.URL.createObjectURL(new Blob([response.data]))
+  const link = document.createElement('a')
+  link.href = url
+  
+  const contentDisposition = response.headers['content-disposition']
+  let fileName = '用户信息.xlsx'
+  if (contentDisposition) {
+    const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+    if (fileNameMatch && fileNameMatch[1]) {
+      fileName = decodeURIComponent(fileNameMatch[1].replace(/['"]/g, ''))
+    }
+  }
+  
+  link.setAttribute('download', fileName)
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+
+/**
+ * 创建用户导出任务（异步）
+ * @param role 角色筛选（可选）
+ * @param department 部门筛选（可选）
+ * @returns 任务ID
+ */
+export const createUserExportTask = async (
+  role?: string, 
+  department?: string
+): Promise<number> => {
+  const params: Record<string, string> = {}
+  if (role) params.role = role
+  if (department) params.department = department
+  
+  // request 的响应拦截器已经提取了 res.data
+  // 后端可能返回两种格式：
+  // 1. { code: 200, data: 123 } 或 { code: 200, data: { taskId: 123 } }
+  const response = await request.post<any>(
+    '/users/export/async',
+    {},
+    { params }
+  )
+  
+  // 兼容两种格式：直接是数字，或是对象中的 taskId/id 字段
+  const taskId = typeof response === 'number' ? response : response?.taskId || response?.id
+  
+  if (!taskId) {
+    console.error('后端返回的任务ID为空:', response)
+    throw new Error('无法获取导出任务ID，请检查后端返回格式')
+  }
+  
+  return taskId as number
+}
+
+/**
+ * 查询导出任务状态
+ * @param taskId 任务ID
+ * @returns 任务信息
+ */
+export const getExportTask = async (taskId: number): Promise<{
+  id: number
+  taskType: string
+  status: 'PENDING' | 'PROCESSING' | 'SUCCESS' | 'FAILED'
+  filePath?: string
+  errorMsg?: string
+  createdAt: string
+  updatedAt: string
+}> => {
+  return request.get(`/export-tasks/${taskId}`)
+}
+
+/**
+ * 下载导出文件
+ * @param taskId 任务ID
+ */
+export const downloadExportFile = async (taskId: number): Promise<void> => {
   const token = localStorage.getItem('token')
   
-  const response = await axios.get(`/api/users/export?${params.toString()}`, {
+  const response = await axios.get(`/api/export-tasks/${taskId}/download`, {
     responseType: 'blob',
     withCredentials: true,
     headers: {
@@ -136,14 +216,13 @@ export const exportUsers = async (role?: string, department?: string): Promise<v
     }
   })
   
-  // 确保响应数据是Blob类型
+  // 创建下载链接
   const blob = response.data instanceof Blob 
     ? response.data 
     : new Blob([response.data], { 
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
       })
   
-  // 创建下载链接
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
@@ -152,7 +231,6 @@ export const exportUsers = async (role?: string, department?: string): Promise<v
   const contentDisposition = response.headers['content-disposition']
   let fileName = '用户信息.xlsx'
   if (contentDisposition) {
-    // 处理UTF-8编码的文件名
     const fileNameMatch = contentDisposition.match(/filename\*=UTF-8''(.+)|filename="?([^"]+)"?/i)
     if (fileNameMatch) {
       fileName = fileNameMatch[1] 

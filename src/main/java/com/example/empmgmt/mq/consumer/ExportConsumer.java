@@ -4,11 +4,15 @@ import com.alibaba.excel.EasyExcel;
 import com.example.empmgmt.config.ExportMqConfig;
 import com.example.empmgmt.domain.Employee;
 import com.example.empmgmt.domain.ExportTask;
+import com.example.empmgmt.domain.User;
 import com.example.empmgmt.dto.vo.EmployeeExportVO;
+import com.example.empmgmt.dto.vo.UserExportVO;
 import com.example.empmgmt.mq.dto.EmployeeExportParams;
 import com.example.empmgmt.mq.dto.ExportTaskMessage;
+import com.example.empmgmt.mq.dto.UserExportParams;
 import com.example.empmgmt.repository.EmployeeRepository;
 import com.example.empmgmt.repository.ExportTaskRepository;
+import com.example.empmgmt.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +35,7 @@ import java.util.List;
 public class ExportConsumer {
 
     private final ExportTaskRepository exportTaskRepository;
+    private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
     private final ObjectMapper objectMapper;
 
@@ -71,8 +76,15 @@ public class ExportConsumer {
                 );
                 // 执行员工导出
                 doEmployeeExport(exportTask, params);
+            } else if ("USER_EXPORT".equals(exportTask.getTaskType())) {
+                UserExportParams params = objectMapper.readValue(
+                        exportTask.getParams(),
+                        UserExportParams.class
+                );
+                // 执行用户导出
+                doUserExport(exportTask, params);
             } else {
-                // 预留：其他类型导出
+                // 不支持的导出类型
                 log.warn("暂不支持的导出类型: {}", exportTask.getTaskType());
                 exportTask.setStatus("FAILED");
                 exportTask.setErrorMsg("不支持的导出类型: " + exportTask.getTaskType());
@@ -130,6 +142,49 @@ public class ExportConsumer {
     }
 
     /**
+     * 执行用户导出
+     */
+    private void doUserExport(ExportTask task, UserExportParams params) {
+        // 1、查询数据
+        List<User> users;
+        if (params.getRole() != null && !params.getRole().isEmpty()) {
+            if (params.getDepartment() != null && !params.getDepartment().isEmpty()) {
+                users = userRepository.findByRoleAndDepartment(params.getRole(), params.getDepartment());
+            } else {
+                users = userRepository.findByRole(params.getRole());
+            }
+        } else {
+            // 无过滤条件，查询所有用户
+            users = userRepository.findAll();
+        }
+
+        // 2、转换为VO
+        List<UserExportVO> voList = users.stream()
+                .map(this::convertToUserVO)
+                .toList();
+
+        // 3. 生成文件（简单起见，写到本地磁盘）
+        String fileName = "用户信息_" + LocalDateTime.now().format(FILE_NAME_FORMATTER) + ".xlsx";
+        String dir = "D:/exports"; // 可以放到配置
+        File dirFile = new File(dir);
+        if (!dirFile.exists()) {
+            dirFile.mkdirs();
+        }
+        File file = new File(dirFile, fileName);
+        // 使用 EasyExcel 写入文件
+        EasyExcel.write(file, UserExportVO.class)
+                .sheet("用户信息")
+                .doWrite(voList);
+        // 4. 更新任务状态为 SUCCESS
+        task.setStatus("SUCCESS");
+        task.setFilePath(file.getAbsolutePath());
+        task.setUpdatedAt(LocalDateTime.now());
+        exportTaskRepository.save(task);
+        log.info("用户导出完成，taskId={}, file={}", task.getId(), file.getAbsolutePath());
+    }
+
+
+    /**
      * 转换 Employee 到 EmployeeExportVO
      */
     private EmployeeExportVO toEmployeeExportVO(Employee employee) {
@@ -145,6 +200,23 @@ public class ExportConsumer {
         vo.setAvatar(employee.getAvatar());
         vo.setCreatedAt(employee.getCreatedAt());
         vo.setUpdatedAt(employee.getUpdatedAt());
+        return vo;
+    }
+
+    /**
+     * User转换为UserExportVO
+     */
+    private UserExportVO convertToUserVO(User user) {
+        UserExportVO vo = new UserExportVO();
+        vo.setId(user.getId());
+        vo.setUsername(user.getUsername());
+        vo.setEmail(user.getEmail());
+        vo.setRole(user.getRole());
+        vo.setDepartment(user.getDepartment());
+        vo.setEmployeeId(user.getEmployeeId());
+        vo.setEnabledStatus(user.getEnabled() != null && user.getEnabled() ? "启用" : "禁用");
+        vo.setCreatedAt(user.getCreatedAt());
+        vo.setUpdatedAt(user.getUpdatedAt());
         return vo;
     }
 }

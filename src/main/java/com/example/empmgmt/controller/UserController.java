@@ -3,6 +3,7 @@ package com.example.empmgmt.controller;
 import com.example.empmgmt.common.annotation.OperationLog;
 import com.example.empmgmt.common.annotation.RequiresRole;
 import com.example.empmgmt.common.enums.OperationType;
+import com.example.empmgmt.common.util.SecurityUtil;
 import com.example.empmgmt.domain.User;
 import com.example.empmgmt.dto.request.AssignRoleRequest;
 import com.example.empmgmt.dto.request.ResetPasswordRequest;
@@ -12,7 +13,10 @@ import com.example.empmgmt.dto.response.PageResponse;
 import com.example.empmgmt.dto.response.Result;
 import com.example.empmgmt.dto.response.UserResponse;
 import com.example.empmgmt.dto.response.UserWithEmployeeDTO;
+import com.example.empmgmt.mq.dto.EmployeeExportParams;
+import com.example.empmgmt.mq.dto.UserExportParams;
 import com.example.empmgmt.service.ExportService;
+import com.example.empmgmt.service.ExportTaskService;
 import com.example.empmgmt.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -28,8 +32,12 @@ public class UserController {
 
     private final UserService userService;
     private final ExportService exportService;
+    private final ExportTaskService exportTaskService;
 
-    public UserController(UserService userService, ExportService exportService) {
+    public UserController(UserService userService,
+                          ExportService exportService,
+                          ExportTaskService exportTaskService) {
+        this.exportTaskService = exportTaskService;
         this.exportService = exportService;
         this.userService = userService;
     }
@@ -259,6 +267,26 @@ public class UserController {
             HttpServletResponse response
     ) throws IOException {
         exportService.exportUsersToExcel(role, department, response);
+    }
+
+
+    /**
+     * 异步创建员工信息导出任务
+     */
+    @PostMapping("/export/async")
+    @RequiresRole({"SUPER_ADMIN"})
+    public Result<Long> createExportTask(
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String department
+    ) {
+        // 创建导出任务
+        UserExportParams params = new UserExportParams();
+        params.setRole(role);
+        params.setDepartment(department);
+
+        Long userId = SecurityUtil.getCurrentUserId();
+        Long taskId = exportTaskService.createUserExportTask(params, userId);
+        return Result.success("导出任务已提交", taskId);
     }
 
 }

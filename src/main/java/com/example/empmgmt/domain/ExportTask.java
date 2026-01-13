@@ -2,6 +2,8 @@ package com.example.empmgmt.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +20,7 @@ public class ExportTask {
     private String taskType;       // EMPLOYEE_EXPORT / USER_EXPORT
 
     @Column(name = "params", nullable = false, columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON) // 让 Hibernate 将 String 转换为 JSONB。
     private String params;         // 直接存 JSON 字符串
 
     @Column(name = "status", nullable = false, length = 20)

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
+                "file": "docs/消息队列导出功能检查与修复方案.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "导出方案对比：同步vs异步、EasyExcel使用详解"
+              "title": "消息队列导出功能检查与修复方案"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
+                "file": "docs/消息队列导出功能检查与修复方案.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 导出方案对比：同步vs异步、EasyExcel使用详解"
+              "title": "Backlinks for 消息队列导出功能检查与修复方案"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
+                "file": "docs/消息队列导出功能检查与修复方案.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 导出方案对比：同步vs异步、EasyExcel使用详解"
+              "title": "Outgoing links from 消息队列导出功能检查与修复方案"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
+                "file": "docs/消息队列导出功能检查与修复方案.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 导出方案对比：同步vs异步、EasyExcel使用详解"
+              "title": "Outline of 消息队列导出功能检查与修复方案"
             }
           }
         ]
@@ -185,27 +185,29 @@
   },
   "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
+    "target/classes/com/example/empmgmt/config/ExportMqConfig.class",
+    "target/classes/com/example/empmgmt/domain/ExportTask.class",
+    "src/main/java/com/example/empmgmt/domain/ExportTask.java~",
+    "target/classes/com/example/empmgmt/service/Impl/ExportTaskServiceImpl.class",
+    "target/classes/com/example/empmgmt/mq/dto/ExportTaskMessage.class",
+    "target/classes/com/example/empmgmt/repository/ExportTaskRepository.class",
+    "target/classes/com/example/empmgmt/mq/consumer/ExportConsumer.class",
+    "target/classes/com/example/empmgmt/mq/consumer",
+    "target/classes/com/example/empmgmt/controller/UserController.class",
+    "target/classes/com/example/empmgmt/controller/ExportTaskController.class",
+    "target/classes/com/example/empmgmt/mq/dto/UserExportParams.class",
     "docs/消息队列异步导出完整解析：从零开始理解MQ架构.md",
-    "docs/后端评估和前端改造指南.md",
+    "docs/员工和用户信息导出功能实现文档.md",
     "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
+    "docs/消息队列导出功能检查与修复方案.md",
+    "docs/后端评估和前端改造指南.md",
     "docs/MQ 异步化实践文档：导出通知日志异步化.md",
     "docs/Redis 进阶实践文档：分页缓存 + 登录令牌桶限流.md",
     "docs/JWT与Spring Security实战：从入门到踩坑.md",
-    "frontend/node_modules/@ant-design/icons/lib/icons/BackwardOutlined.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/BackwardFilled.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/AuditOutlined.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/AudioFilled.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/ArrowsAltOutlined.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/ArrowUpOutlined.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/ArrowDownOutlined.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/AreaChartOutlined.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/AppstoreTwoTone.d.ts",
-    "frontend/node_modules/@ant-design/icons/lib/icons/AppstoreOutlined.d.ts",
     "docs/令牌桶限流实战：从原理到实现.md",
     "docs/企业级删除策略与用户表设计指南.md",
     "docs/企业级功能扩展方案.md",
     "docs/用户管理功能完整实现方案.md",
-    "docs/员工和用户信息导出功能实现文档.md",
     "docs/无感刷新机制和HTTP传输详解.md",
     "docs/a.md",
     "docs/a1.md",
@@ -219,8 +221,6 @@
     "docs/前端用户管理功能实现指南.md",
     "docs/前端RBAC权限展示实现方案.md",
     "docs/RBAC权限系统设计方案.md",
-    "docs/RBAC权限系统完善方案.md",
-    "docs/RBAC权限系统关系图.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zhihu.svg",

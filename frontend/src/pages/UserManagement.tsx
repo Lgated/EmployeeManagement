@@ -51,6 +51,12 @@ import { RoleNames } from '../types/user'
 import { getEmployeeList } from '../api/employee'  // 用于选择员工
 import { useAuthStore } from '../stores/authStore'
 import { exportUsers } from '../api/user'
+import { 
+  createUserExportTask, 
+  getExportTask, 
+  downloadExportFile 
+} from '../api/user'
+
 
 const { Option } = Select
 
@@ -86,20 +92,45 @@ const UserManagement: React.FC = () => {
     const [roleForm] = Form.useForm()
     const [passwordForm] = Form.useForm()
 
-    const handleExport = async () => {
-        try {
-            // 使用当前的筛选条件
-            const role = filters.role || undefined
-            // 注意：UserManagement页面目前没有department筛选，所以传undefined
-            const department = undefined
-
-            await exportUsers(role, department)
-            message.success('导出成功')
-        } catch (error: any) {
-            console.error('导出失败:', error)
-            message.error('导出失败: ' + (error.message || '未知错误'))
+// 修改handleExport函数
+const handleExport = async () => {
+  try {
+    const role = filters.role || undefined
+    const department = undefined  // UserManagement页面目前没有department筛选
+    
+    // 1. 创建导出任务
+    message.loading('正在提交导出任务...', 0)
+    const taskId = await createUserExportTask(role, department)
+    message.destroy()
+    message.success('导出任务已提交，正在处理中...')
+    
+    // 2. 轮询查询任务状态
+    const pollTask = async () => {
+      try {
+        const task = await getExportTask(taskId)
+        
+        if (task.status === 'SUCCESS') {
+          message.success('文件已生成，开始下载...')
+          await downloadExportFile(taskId)
+          message.success('下载成功')
+        } else if (task.status === 'FAILED') {
+          message.error('导出失败: ' + (task.errorMsg || '未知错误'))
+        } else if (task.status === 'PROCESSING' || task.status === 'PENDING') {
+          setTimeout(pollTask, 2000)
         }
+      } catch (error: any) {
+        message.error('查询任务状态失败: ' + (error.message || '未知错误'))
+      }
     }
+    
+    pollTask()
+    
+  } catch (error: any) {
+    message.destroy()
+    console.error('导出失败:', error)
+    message.error('导出失败: ' + (error.message || '未知错误'))
+  }
+}
 
     // 加载用户列表
     const loadUsers = async () => {

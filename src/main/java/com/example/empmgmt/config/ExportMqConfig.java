@@ -1,6 +1,8 @@
 package com.example.empmgmt.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,5 +32,12 @@ public class ExportMqConfig {
                 .bind(exportQueue()) // 绑定队列
                 .to(exportExchange()) // 绑定交换机
                 .with(EXPORT_ROUTING_KEY); // 指定路由键
+    }
+
+
+    // 添加这个Bean：配置JSON消息转换器
+    @Bean
+    public MessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 }
