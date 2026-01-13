@@ -37,6 +37,15 @@ spring:
     # 开启「生产者确认机制」 -- correlated 类型说明:是 Spring AMQP 2.1+ 推荐的类型，支持「异步回调」：生产者发送消息后无需阻塞等待，通过 ConfirmCallback 回调函数接收确认结果；
     publisher-confirm-type: correlated
     publisher-returns: true # 开启「生产者回退机制」
+    listener: # 监听器配置
+      simple:
+        retry: # 重试配置
+          enabled: true  # 开启消费者重试
+          max-attempts: 3     # 最大重试次数（包含第1次，即1次正常+2次重试）
+          initial-interval: 2000  # 2s: 初始间隔时间，单位毫秒
+          multiplier: 2.0   #  间隔倍数（2秒 -> 4秒...）
+          max-interval: 10000ms  # 最大间隔时间10秒
+        default-requeue-rejected: false # 重试次数用完，消费失败的消息不重新入队列,进入死信队列
 
 server:
   port: 8080

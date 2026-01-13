@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 导出任务的消费者
@@ -38,6 +40,7 @@ public class ExportConsumer {
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
     private final ObjectMapper objectMapper;
+    private final StringRedisTemplate stringRedisTemplate;
 
 
     private static final DateTimeFormatter FILE_NAME_FORMATTER =
@@ -48,23 +51,37 @@ public class ExportConsumer {
      *  处理导出任务消息
      */
     @RabbitListener(queues = ExportMqConfig.EXPORT_QUEUE)
-    @Transactional
     public void handleExportTask(ExportTaskMessage message){
         log.info("收到导出任务消息: {}", message);
 
-        // 查询导出任务
-        ExportTask exportTask = exportTaskRepository.findById(message.getTaskId()).orElseThrow(() ->
-                new RuntimeException("导出任务不存在，taskId=" + message.getTaskId())
-        );
+        // 分布式锁的 key
+        String lockKey = "export:task:lock:" + message.getTaskId();
 
-        // 简单幂等：如果不是 PENDING，就不再处理
-        if (!"PENDING".equals(exportTask.getStatus())) {
-            log.info("导出任务状态不是PENDING，跳过。taskId={}, status={}", exportTask.getId(), exportTask.getStatus());
+        // 使用Redis 幂等/防重锁
+        // 尝试占坑，如果 key 不存在则设置成功返回 true，过期时间 30分钟（防止代码挂了死锁）
+        Boolean isLockAcquired = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "1", 30, TimeUnit.MINUTES);
+
+        if (Boolean.FALSE.equals(isLockAcquired)) {
+            log.warn("任务正在处理中或已处理，触发防重逻辑，丢弃消息: taskId={}", message.getTaskId());
+            // 此时直接返回，MQ 认为消费成功，不会再重试，完美防止重复消费
             return;
         }
 
+
         try{
-            // 更新任务状态为 PROCESSING
+
+            // 1. 查询任务
+            ExportTask exportTask = exportTaskRepository.findById(message.getTaskId()).orElseThrow(() ->
+                    new RuntimeException("任务不存在") // 这种错误重试也没用，但在简单设计中也抛出去进死信吧
+            );
+
+            // 2. 数据库层面的幂等兜底 (乐观锁思想)
+            if (!"PENDING".equals(exportTask.getStatus())) {
+                log.info("任务状态非PENDING，跳过: {}", exportTask.getStatus());
+                return;
+            }
+
+            // 3.更新任务状态为 PROCESSING
             exportTask.setStatus("PROCESSING");
             exportTask.setUpdatedAt(LocalDateTime.now());
             exportTaskRepository.save(exportTask);
@@ -84,7 +101,7 @@ public class ExportConsumer {
                 // 执行用户导出
                 doUserExport(exportTask, params);
             } else {
-                // 不支持的导出类型
+                // 不支持的类型，这种不需要重试，直接在数据库标记失败即可，不需要抛异常
                 log.warn("暂不支持的导出类型: {}", exportTask.getTaskType());
                 exportTask.setStatus("FAILED");
                 exportTask.setErrorMsg("不支持的导出类型: " + exportTask.getTaskType());
@@ -92,12 +109,22 @@ public class ExportConsumer {
                 exportTaskRepository.save(exportTask);
             }
         }catch (Exception e) {
-            log.error("处理导出任务失败，taskId={}", exportTask.getId(), e);
-            exportTask.setStatus("FAILED");
-            exportTask.setErrorMsg(e.getMessage());
-            exportTask.setUpdatedAt(LocalDateTime.now());
-            exportTaskRepository.save(exportTask);
-            // 不抛异常，避免 MQ 重复投递；更高级的重试/死信队列可以后续引入
+            // 异常处理
+            log.error("处理任务异常，准备抛出以触发重试: taskId={}", message.getTaskId(), e);
+
+            // 重要：Redis 锁不仅是防重，如果任务失败了要重试，得把锁删掉，
+            // 否则重试的时候（第二次进来）会因为上面有锁而直接返回，导致重试失效！
+            stringRedisTemplate.delete(lockKey);
+
+            // 抛出异常 -> 触发 Spring RabbitMQ 的重试机制 (application.yml配置的3次)
+            // 重试3次还挂 -> 扔进死信队列
+            throw new RuntimeException("导出失败，触发重试", e);
+        }finally {
+            // 如果成功了，锁可以留着让它自然过期（作为一段时间内的防重墙），
+            // 也可以删掉。对于“只做一次”的任务，通常留着自然过期更安全。
+            // 但如果想要任务完成后立刻允许下一次（虽然id不一样），可以 delete。
+            // 这里我们选择让它过期，作为该 TaskId 的“已消费凭证”。
+            stringRedisTemplate.expire(lockKey, 24, TimeUnit.HOURS); // 延长过期时间作为完成标记
         }
     }
 

@@ -93,9 +93,9 @@ const Layout = () => {
     } catch (error: any) {
       // 即使后端失败，也清除前端状态
       console.error('登出失败:', error)
-      clearAuth()
+    clearAuth()
       message.warning('退出登录时发生错误，已清除本地数据')
-      navigate('/login')
+    navigate('/login')
     }
   }
 

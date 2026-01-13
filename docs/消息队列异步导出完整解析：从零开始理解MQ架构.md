@@ -1133,3 +1133,8 @@ if (!"PENDING".equals(task.getStatus())) {
 - RabbitMQ官方文档：https://www.rabbitmq.com/documentation.html
 - Spring AMQP文档：https://spring.io/projects/spring-amqp
 
+
+
+
+
+
