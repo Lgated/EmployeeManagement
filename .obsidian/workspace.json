@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/消息队列导出优化与重试设计.md",
+                "file": "docs/快速入门指南：xxl-job+ES+多线程.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "消息队列导出优化与重试设计"
+              "title": "快速入门指南：xxl-job+ES+多线程"
             }
           }
         ]
@@ -185,20 +185,23 @@
   },
   "active": "cd6898a1dcb19749",
   "lastOpenFiles": [
-    "target/classes/com/example/empmgmt/mq/consumer/DeadLetterConsumer.class",
-    "target/classes/com/example/empmgmt/mq/consumer/ExportConsumer.class",
-    "target/classes/com/example/empmgmt/mq/consumer",
-    "target/classes/com/example/empmgmt/config/ExportMqConfig.class",
-    "target/classes/com/example/empmgmt/config/SecurityConfig.class",
-    "src/main/java/com/example/empmgmt/mq/consumer/DeadLetterConsumer.java",
-    "docs/消息队列异步导出完整解析：从零开始理解MQ架构.md",
+    "README.md",
+    "docs/项目技术栈分析与扩展方案：xxl-job+ES+多线程.md",
+    "docs/快速入门指南：xxl-job+ES+多线程.md",
     "docs/消息队列导出优化与重试设计.md",
+    "docs/xxl-job+ES+多线程详细实现指南.md",
+    "target/test-classes/com/example/empmgmt/RedisQueue.class",
+    "target/test-classes/com/example/empmgmt/PasswordHashGenerator.class",
+    "target/test-classes/com/example/empmgmt",
+    "target/test-classes/com/example",
+    "target/test-classes/com",
+    "target/test-classes",
+    "target/generated-test-sources/test-annotations",
+    "target/generated-test-sources",
+    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl.class",
+    "target/classes/com/example/empmgmt/service/Impl/UserServiceImpl$1.class",
+    "docs/消息队列异步导出完整解析：从零开始理解MQ架构.md",
     "docs/消息队列导出功能检查与修复方案.md",
-    "target/classes/com/example/empmgmt/domain/ExportTask.class",
-    "src/main/java/com/example/empmgmt/domain/ExportTask.java~",
-    "target/classes/com/example/empmgmt/service/Impl/ExportTaskServiceImpl.class",
-    "target/classes/com/example/empmgmt/mq/dto/ExportTaskMessage.class",
-    "target/classes/com/example/empmgmt/repository/ExportTaskRepository.class",
     "docs/员工和用户信息导出功能实现文档.md",
     "docs/导出方案对比：同步vs异步、EasyExcel使用详解.md",
     "docs/后端评估和前端改造指南.md",
@@ -218,9 +221,6 @@
     "docs/POI与EasyExcel对比.md",
     "docs/生成密码哈希.md",
     "docs/权限验证403错误修复方案.md",
-    "docs/前端项目说明.md",
-    "docs/前端用户管理功能实现指南.md",
-    "docs/前端RBAC权限展示实现方案.md",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-out.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zoom-in.svg",
     "frontend/node_modules/@ant-design/icons-svg/inline-svg/outlined/zhihu.svg",

@@ -67,8 +67,10 @@ public class ExportConsumer {
             return;
         }
 
+        boolean taskSuccess = false; // 任务是否成功完成的标记;
 
         try{
+
 
             // 1. 查询任务
             ExportTask exportTask = exportTaskRepository.findById(message.getTaskId()).orElseThrow(() ->
@@ -78,6 +80,8 @@ public class ExportConsumer {
             // 2. 数据库层面的幂等兜底 (乐观锁思想)
             if (!"PENDING".equals(exportTask.getStatus())) {
                 log.info("任务状态非PENDING，跳过: {}", exportTask.getStatus());
+                // 任务已处理，删除锁并返回
+                stringRedisTemplate.delete(lockKey);
                 return;
             }
 
@@ -93,6 +97,7 @@ public class ExportConsumer {
                 );
                 // 执行员工导出
                 doEmployeeExport(exportTask, params);
+                taskSuccess = true;
             } else if ("USER_EXPORT".equals(exportTask.getTaskType())) {
                 UserExportParams params = objectMapper.readValue(
                         exportTask.getParams(),
@@ -100,6 +105,7 @@ public class ExportConsumer {
                 );
                 // 执行用户导出
                 doUserExport(exportTask, params);
+                taskSuccess = true;
             } else {
                 // 不支持的类型，这种不需要重试，直接在数据库标记失败即可，不需要抛异常
                 log.warn("暂不支持的导出类型: {}", exportTask.getTaskType());
@@ -107,6 +113,8 @@ public class ExportConsumer {
                 exportTask.setErrorMsg("不支持的导出类型: " + exportTask.getTaskType());
                 exportTask.setUpdatedAt(LocalDateTime.now());
                 exportTaskRepository.save(exportTask);
+                // 删除锁，允许重试其他任务
+                stringRedisTemplate.delete(lockKey);
             }
         }catch (Exception e) {
             // 异常处理
@@ -124,7 +132,14 @@ public class ExportConsumer {
             // 也可以删掉。对于“只做一次”的任务，通常留着自然过期更安全。
             // 但如果想要任务完成后立刻允许下一次（虽然id不一样），可以 delete。
             // 这里我们选择让它过期，作为该 TaskId 的“已消费凭证”。
-            stringRedisTemplate.expire(lockKey, 24, TimeUnit.HOURS); // 延长过期时间作为完成标记
+
+            // 只有任务成功完成时，才延长锁的过期时间作为防重标记
+            // 失败的情况已经在catch中删除锁了，这里不需要再操作
+            if (taskSuccess) {
+                stringRedisTemplate.expire(lockKey, 24, TimeUnit.HOURS); // 延长过期时间作为完成标记
+                log.info("任务成功完成，延长锁过期时间至24小时作为防重标记: taskId={}", message.getTaskId());
+            }
+
         }
     }
 
